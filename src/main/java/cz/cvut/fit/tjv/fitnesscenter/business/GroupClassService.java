@@ -2,17 +2,20 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
-@Service
-public class GroupClassService {
-    public final GroupClassRepository repository;
 
-    public GroupClassService(GroupClassRepository repository) {
-        this.repository = repository;
-    }
+@Service
+@AllArgsConstructor
+public class GroupClassService {
+
+    GroupClassRepository repository;
 
     public GroupClass create(GroupClass entity) throws EntityStateException {
         Long id = entity.getId();
@@ -26,8 +29,10 @@ public class GroupClassService {
         return repository.findById(id);
     }
 
-    public Iterable<GroupClass> findAll() {
-        return repository.findAll();
+    public Collection<GroupClass> findAll() {
+        List<GroupClass> list = new ArrayList<>();
+        repository.findAll().forEach(list::add);
+        return list;
     }
 
     public GroupClass update(GroupClass entity) throws EntityStateException {

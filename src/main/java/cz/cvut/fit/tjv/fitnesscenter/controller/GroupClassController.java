@@ -5,7 +5,6 @@ import cz.cvut.fit.tjv.fitnesscenter.business.GroupClassService;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ public class GroupClassController {
 
     @GetMapping
     public ResponseEntity<Collection<GroupClass>> readAll() {
-        return new ResponseEntity<>(StreamSupport.stream(groupClassService.findAll().spliterator(), false).toList(), HttpStatus.OK);
+        return new ResponseEntity<>(groupClassService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
