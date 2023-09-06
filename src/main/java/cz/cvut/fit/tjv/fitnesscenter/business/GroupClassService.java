@@ -13,16 +13,16 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class GroupClassService {
+public class GroupClassService implements ServiceInterface<GroupClass> {
 
     GroupClassRepository repository;
 
-    public GroupClass create(GroupClass entity) throws EntityStateException {
-        Long id = entity.getId();
+    public GroupClass create(GroupClass groupClass) throws EntityStateException {
+        Long id = groupClass.getId();
         if (id != null && repository.existsById(id))
-            throw new EntityStateException("class with id " + entity.getId() + " already exists");
+            throw new EntityStateException("class with id " + groupClass.getId() + " already exists");
         //todo: check room capacity
-        return repository.save(entity);
+        return repository.save(groupClass);
     }
 
     public Optional<GroupClass> findById(Long id) {
@@ -35,13 +35,16 @@ public class GroupClassService {
         return list;
     }
 
-    public GroupClass update(GroupClass entity) throws EntityStateException {
-        Long id = entity.getId();
+    public GroupClass update(GroupClass groupClass, Long pathId) throws EntityStateException {
+        if (!groupClass.getId().equals(pathId)) {
+            throw new EntityStateException("conficting id in path and in body");
+        }
+        Long id = groupClass.getId();
         if (id == null)
             throw new EntityStateException("class id missing");
         //todo: check room capacity
         if (repository.existsById(id))
-            return repository.save(entity);
+            return repository.save(groupClass);
         else
             throw new EntityStateException("class with id " + id + " does not exist exists");
     }
