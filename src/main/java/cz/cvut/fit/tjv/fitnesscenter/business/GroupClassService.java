@@ -25,7 +25,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
             throw new EntityStateException("class with id " + groupClass.getId() + " already exists");
         if (groupClass.getRoom() != null && !roomExists(groupClass))
             throw new EntityStateException("room with id " + groupClass.getRoom().getId() + " doesn't exist");
-        //todo: check room capacity
+        //todo: check room availability
+        if (!enoughCapacity(groupClass))
+            throw new EntityStateException("not enough capacity in room");
         return repository.save(groupClass);
     }
 
@@ -46,9 +48,11 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         if (!exists(groupClass))
             throw new EntityStateException("class id missing or class with this id doesnt exist");
-        //todo: check room capacity
         if (groupClass.getRoom() != null && !roomExists(groupClass))
             throw new EntityStateException("room id missing or room with this id doesnt exist");
+        //todo: check room availability
+        if (!enoughCapacity(groupClass))
+            throw new EntityStateException("not enough capacity in room");
         return repository.save(groupClass);
     }
 
@@ -70,6 +74,12 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return roomId != null && roomService.findById(roomId).isPresent();
     }
 
-//    public void checkCapacity throws InsufficientCapacityException () {}
+    public Boolean enoughCapacity (GroupClass groupClass) {
+        var room = roomService.findById(groupClass.getRoom().getId());
+        if (room.isPresent()) {
+            return groupClass.getCapacity() <= room.get().getCapacity();
+        }
+        return false;
+    }
 
 }
