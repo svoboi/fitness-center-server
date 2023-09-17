@@ -47,7 +47,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         if (!exists(groupClass))
             throw new EntityStateException("class id missing or class with this id doesnt exist");
         //todo: check room capacity
-        if (!roomExists(groupClass))
+        if (groupClass.getRoom() != null && !roomExists(groupClass))
             throw new EntityStateException("room id missing or room with this id doesnt exist");
         return repository.save(groupClass);
     }
