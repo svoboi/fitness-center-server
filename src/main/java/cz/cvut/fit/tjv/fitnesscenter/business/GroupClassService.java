@@ -1,7 +1,9 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
+import cz.cvut.fit.tjv.fitnesscenter.dao.RoomRepository;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
+import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +18,17 @@ import java.util.Optional;
 public class GroupClassService implements ServiceInterface<GroupClass> {
 
     GroupClassRepository repository;
+    RoomService roomService;
 
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
-        Long id = groupClass.getId();
-        if (id != null && repository.existsById(id))
+        if (exists(groupClass))
             throw new EntityStateException("class with id " + groupClass.getId() + " already exists");
+        if (groupClass.getRoom() != null && !roomExists(groupClass))
+            throw new EntityStateException("room with id " + groupClass.getRoom().getId() + " doesn't exist");
         //todo: check room capacity
         return repository.save(groupClass);
     }
+
 
     public Optional<GroupClass> findById(Long id) {
         return repository.findById(id);
@@ -39,18 +44,30 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         if (!groupClass.getId().equals(pathId)) {
             throw new EntityStateException("conficting id in path and in body");
         }
-        Long id = groupClass.getId();
-        if (id == null)
-            throw new EntityStateException("class id missing");
+        if (!exists(groupClass))
+            throw new EntityStateException("class id missing or class with this id doesnt exist");
         //todo: check room capacity
-        if (repository.existsById(id))
-            return repository.save(groupClass);
-        else
-            throw new EntityStateException("class with id " + id + " does not exist exists");
+        if (!roomExists(groupClass))
+            throw new EntityStateException("room id missing or room with this id doesnt exist");
+        return repository.save(groupClass);
     }
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public Collection<GroupClass> findAllByRoom(Room room) {
+        return repository.findAllByRoom(room);
+    }
+
+    public Boolean exists(GroupClass groupClass) {
+        Long id = groupClass.getId();
+        return id != null && repository.existsById(id);
+    }
+
+    public Boolean roomExists(GroupClass groupClass) {
+        Long roomId = groupClass.getRoom().getId();
+        return roomId != null && roomService.findById(roomId).isPresent();
     }
 
 //    public void checkCapacity throws InsufficientCapacityException () {}

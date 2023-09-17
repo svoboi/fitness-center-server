@@ -20,13 +20,6 @@ public class GroupClass {
     private LocalTime timeTo;
     private int capacity;
 
-    public GroupClass(LocalDate day,
-                      LocalTime timeFrom,
-                      LocalTime timeTo,
-                      int capacity) {
-        this.day = day;
-        this.timeFrom = timeFrom;
-        this.timeTo = timeTo;
-        this.capacity = capacity;
-    }
+    @ManyToOne
+    Room room;
 }
