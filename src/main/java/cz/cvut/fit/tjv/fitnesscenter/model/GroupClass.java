@@ -22,4 +22,7 @@ public class GroupClass {
 
     @ManyToOne
     Room room;
+
+    @ManyToOne
+    SportType sportType;
 }
