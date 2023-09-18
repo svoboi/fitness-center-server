@@ -1,11 +1,8 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.RoomRepository;
-import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

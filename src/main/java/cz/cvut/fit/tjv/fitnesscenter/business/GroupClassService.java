@@ -1,7 +1,6 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
-import cz.cvut.fit.tjv.fitnesscenter.dao.RoomRepository;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,6 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
             throw new EntityStateException("not enough capacity in room");
         return repository.save(groupClass);
     }
-
 
     public Optional<GroupClass> findById(Long id) {
         return repository.findById(id);
@@ -81,5 +79,4 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         return false;
     }
-
 }

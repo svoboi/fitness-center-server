@@ -8,12 +8,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @ToString
 public class GroupClass {
     @Id
     @GeneratedValue
-    Long id;
+    public Long id;
 
     private LocalDate day;
     private LocalTime timeFrom;

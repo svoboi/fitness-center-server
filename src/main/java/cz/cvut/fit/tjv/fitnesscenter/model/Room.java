@@ -6,11 +6,13 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString
 public class Room {
     @Id
     @GeneratedValue
-    Long id;
+    public Long id;
 
     private int capacity;
 }
