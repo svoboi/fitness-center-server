@@ -49,8 +49,8 @@ public abstract class AbstractController<EntityType> {
     public ResponseEntity<Object> delete(@PathVariable Long id) {
         if (service.findById(id).isPresent()) {
             service.deleteById(id);
-            return new ResponseEntity<>("Room was deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Entity was deleted successfully", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Room with id " + id + " doesn't exist", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Entity with id " + id + " doesn't exist", HttpStatus.BAD_REQUEST);
     }
 }
