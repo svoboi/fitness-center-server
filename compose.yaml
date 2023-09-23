@@ -6,4 +6,4 @@ services:
       - 'POSTGRES_PASSWORD=fitness'
       - 'POSTGRES_USER=fitness'
     ports:
-      - '5432'
+      - '5432:5432'
