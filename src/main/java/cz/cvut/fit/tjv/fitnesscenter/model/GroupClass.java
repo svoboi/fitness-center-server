@@ -15,10 +15,6 @@ import java.util.Set;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString
-@JsonIdentityInfo(
-        scope = GroupClass.class,
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class GroupClass {
     @Id
     @GeneratedValue

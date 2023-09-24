@@ -16,10 +16,6 @@ import java.util.Set;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @ToString
-@JsonIdentityInfo(
-        scope = User.class,
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class User {
     @Id
     @GeneratedValue
