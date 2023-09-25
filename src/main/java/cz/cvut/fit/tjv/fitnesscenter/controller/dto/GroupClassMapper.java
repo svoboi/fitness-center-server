@@ -5,6 +5,7 @@ import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,11 +13,14 @@ import java.util.stream.Collectors;
 public class GroupClassMapper extends Mapper<GroupClass> {
     @Override
     public Object toDto(GroupClass groupClass) {
-        Set<Long> trainers = groupClass
+        Set<Long> trainers = new HashSet<>();
+        if (groupClass.getTrainers() != null) {
+            trainers = groupClass
                 .getTrainers()
                 .stream()
                 .map(User::getId)
                 .collect(Collectors.toSet());
+    }
         return new GroupClassDto(groupClass.getId(),
                 groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getCapacity(),
                 groupClass.getRoom(), groupClass.getSportType(), trainers);
