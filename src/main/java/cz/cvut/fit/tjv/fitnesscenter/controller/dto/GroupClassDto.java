@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -16,9 +17,8 @@ import java.util.Set;
 public class GroupClassDto {
     public Long id;
 
-    private LocalDate day;
-    private LocalTime timeFrom;
-    private LocalTime timeTo;
+    private LocalDateTime timeFrom;
+    private LocalDateTime timeTo;
     private int capacity;
 
     Room room;

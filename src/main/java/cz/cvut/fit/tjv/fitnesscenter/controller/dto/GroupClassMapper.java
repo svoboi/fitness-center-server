@@ -17,7 +17,7 @@ public class GroupClassMapper extends Mapper<GroupClass> {
                 .stream()
                 .map(User::getId)
                 .collect(Collectors.toSet());
-        return new GroupClassDto(groupClass.getId(), groupClass.getDay(),
+        return new GroupClassDto(groupClass.getId(),
                 groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getCapacity(),
                 groupClass.getRoom(), groupClass.getSportType(), trainers);
     }
