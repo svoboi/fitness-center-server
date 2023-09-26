@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 @RestController
@@ -18,8 +21,9 @@ public class GroupClassController extends AbstractController<GroupClass> {
         super(groupClassService, groupClassMapper);
     }
 
-    @GetMapping("/room")
-    public ResponseEntity<Collection<GroupClass>>allClassesByRoom(@RequestBody Room room) {
-            return new ResponseEntity<>(((GroupClassService)service).findAllByRoom(room), HttpStatus.OK);
+    @GetMapping("/room/{id}")
+    public ResponseEntity<List<Object>>allClassesByRoom(@PathVariable Long id) {
+            return new ResponseEntity<>(((GroupClassService)service).findAllByRoom(id)
+                    .stream().map(mapper::toDto).collect(toList()), HttpStatus.OK);
     }
 }
