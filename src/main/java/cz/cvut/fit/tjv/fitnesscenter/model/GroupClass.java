@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,13 +16,18 @@ public class GroupClass {
     @GeneratedValue
     public Long id;
 
+    @NotNull
     private LocalDateTime timeFrom;
+    @NotNull
     private LocalDateTime timeTo;
+    @NotNull
     private int capacity;
 
+    @NotNull
     @ManyToOne
     Room room;
 
+    @NotNull
     @ManyToOne
     SportType sportType;
 

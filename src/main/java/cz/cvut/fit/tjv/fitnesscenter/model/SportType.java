@@ -3,6 +3,7 @@ package cz.cvut.fit.tjv.fitnesscenter.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -14,5 +15,6 @@ public class SportType {
     @GeneratedValue
     public Long id;
 
+    @NotBlank
     private String typeName;
 }
