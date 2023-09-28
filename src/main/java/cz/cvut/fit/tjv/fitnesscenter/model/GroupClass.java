@@ -25,14 +25,14 @@ public class GroupClass {
 
     @NotNull
     @ManyToOne
-    Room room;
+    private Room room;
 
     @NotNull
     @ManyToOne
-    SportType sportType;
+    private SportType sportType;
 
     @ManyToMany
-    Set<User> trainers;
+    private Set<User> trainers;
 
     public void addTrainer(User user) {
         trainers.add(user);
