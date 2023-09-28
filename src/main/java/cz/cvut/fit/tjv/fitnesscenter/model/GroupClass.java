@@ -27,4 +27,12 @@ public class GroupClass {
 
     @ManyToMany
     Set<User> trainers;
+
+    public void addTrainer(User user) {
+        trainers.add(user);
+    }
+
+    public void removeTrainer(User user) {
+        trainers.remove(user);
+    }
 }

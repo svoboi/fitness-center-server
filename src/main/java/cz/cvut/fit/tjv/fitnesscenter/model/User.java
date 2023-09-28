@@ -1,9 +1,6 @@
 package cz.cvut.fit.tjv.fitnesscenter.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,4 +41,19 @@ public class User {
 
     @ManyToMany(mappedBy = "trainers")
     private Set<GroupClass> leadClasses = new HashSet<>();
+
+    public void addLeadClass(GroupClass groupClass) {
+        leadClasses.add(groupClass);
+    }
+
+    public void removeLeadClass(GroupClass groupClass) {
+        leadClasses.remove(groupClass);
+    }
+
+    @PreRemove
+    public void removeTrainersFromGroupClasses () {
+        for (GroupClass leadClass: leadClasses) {
+            leadClass.removeTrainer(this);
+        }
+    }
 }
