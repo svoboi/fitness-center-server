@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -32,7 +33,7 @@ public class GroupClass {
     private SportType sportType;
 
     @ManyToMany
-    private Set<User> trainers;
+    private Set<User> trainers = new HashSet<>();
 
     public void addTrainer(User user) {
         trainers.add(user);

@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 
+import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
@@ -13,14 +14,22 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserService implements ServiceInterface<User>{
+public class UserService implements ServiceInterface<User> {
 
     UserRepository repository;
+    GroupClassRepository groupClassRepository;
 
     public User create(User user) throws EntityStateException {
         Long id = user.getId();
-        if (id != null && repository.existsById(id))
+        if (id != null && exists(user))
             throw new EntityStateException("person with id " + user.getId() + " already exists");
+        if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
+            throw new EntityStateException("non-employee cant teach classes");
+        }
+        if (!leadClassesSetValid(user)) {
+            throw new EntityStateException("at least one of the classes IDs is invalid");
+        }
+        addUserToLeadClasses(user);
         return repository.save(user);
     }
 
@@ -38,16 +47,53 @@ public class UserService implements ServiceInterface<User>{
         if (!user.getId().equals(pathId)) {
             throw new EntityStateException("conficting id in path and in body");
         }
-        Long id = user.getId();
-        if (id == null)
-            throw new EntityStateException("person id missing");
-        if (repository.existsById(id))
-            return repository.save(user);
-        else
-            throw new EntityStateException("person with id " + id + " does not exist exists");
+        if (!exists(user)) {
+            throw new EntityStateException("class id missing or class with this id doesnt exist");
+        }
+        if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
+            throw new EntityStateException("non-employee cant teach classes");
+        }
+        if (!leadClassesSetValid(user)) {
+            throw new EntityStateException("at least one of the classes IDs is invalid");
+        }
+        removeOriginalLeadClasses(repository.findById(pathId).get());
+        addUserToLeadClasses(user);
+        return repository.save(user);
     }
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public Boolean exists(User user) {
+        Long id = user.getId();
+        return id != null && repository.existsById(id);
+    }
+
+    public Boolean leadClassesSetValid(User user) {
+        for (var groupClass : user.getLeadClasses()) {
+            Long groupClassId = groupClass.getId();
+            if (groupClassRepository.findById(groupClassId).isEmpty()) {
+                return Boolean.FALSE;
+            }
+        }
+        return Boolean.TRUE;
+    }
+
+    public void addUserToLeadClasses(User user) {
+        repository.save(user);
+        for (var groupClass : user.getLeadClasses()) {
+            var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
+            groupClassFromRep.addTrainer(user);
+            groupClassRepository.save(groupClassFromRep);
+        }
+    }
+
+    public void removeOriginalLeadClasses(User user) {
+        for (var groupClass : user.getLeadClasses()) {
+            var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
+            groupClassFromRep.removeTrainer(user);
+            groupClassRepository.save(groupClassFromRep);
+        }
     }
 }
