@@ -56,16 +56,7 @@ class JpaRepositoryTest {
 
     @Test
     void shouldKeepGroupClassInfo () {
-        addTestRoom();
-        addTestSportType();
-        GroupClass groupClass1 = new GroupClass(1L,
-                LocalDateTime.of(2023, 3, 20, 9, 30),
-                LocalDateTime.of(2023, 3, 20, 10, 30),
-                100,
-                roomRepository.findAll().iterator().next(),
-                sportTypeRepository.findAll().iterator().next(),
-                new HashSet<>());
-        groupClassRepository.save(groupClass1);
+        addGroupClass();
         var groupClasses = groupClassRepository.findAll();
         assert (groupClasses.iterator().hasNext());
         assert (groupClasses.iterator().next().getCapacity() == 100);
@@ -91,5 +82,17 @@ class JpaRepositoryTest {
                 Boolean.TRUE,
                 new HashSet<>());
         userRepository.save(user1);
+    }
+    void addGroupClass () {
+        addTestRoom();
+        addTestSportType();
+        GroupClass groupClass1 = new GroupClass(1L,
+                LocalDateTime.of(2023, 3, 20, 9, 30),
+                LocalDateTime.of(2023, 3, 20, 10, 30),
+                100,
+                roomRepository.findAll().iterator().next(),
+                sportTypeRepository.findAll().iterator().next(),
+                new HashSet<>());
+        groupClassRepository.save(groupClass1);
     }
 }
