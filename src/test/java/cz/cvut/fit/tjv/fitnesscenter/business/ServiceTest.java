@@ -71,6 +71,59 @@ public class ServiceTest {
         assert (groupClasses.iterator().hasNext());
         assert (groupClasses.iterator().next().getCapacity() == 100);
     }
+
+    @Test
+    void shouldHaveConnectionOnBothSidesGroupClassUpdate () {
+        addTestUser();
+        addGroupClass();
+        var user1 = userService.findAll();
+        GroupClass groupClass1 = new GroupClass(
+                groupClassService.findAll().iterator().next().getId(),
+                LocalDateTime.of(2023, 3, 20, 9, 30),
+                LocalDateTime.of(2023, 3, 20, 10, 30),
+                100,
+                roomService.findAll().iterator().next(),
+                sportTypeService.findAll().iterator().next(),
+                new HashSet<>(user1));
+
+        groupClassService.update(groupClass1, groupClass1.getId());
+        assert (!groupClassService.findAll().iterator().next().getTrainers().isEmpty());
+        assert (!userService.findAll().iterator().next().getLeadClasses().isEmpty());
+    }
+
+    @Test
+    void shouldHaveConnectionOnBothSidesGroupClassCreate () {
+        addTestUser();
+        addTestRoom();
+        addTestSportType();
+        var user1 = userService.findAll();
+        GroupClass groupClass1 = new GroupClass(
+                1L,
+                LocalDateTime.of(2023, 3, 20, 9, 30),
+                LocalDateTime.of(2023, 3, 20, 10, 30),
+                100,
+                roomService.findAll().iterator().next(),
+                sportTypeService.findAll().iterator().next(),
+                new HashSet<>(user1));
+
+        groupClassService.create(groupClass1);
+        assert (!groupClassService.findAll().iterator().next().getTrainers().isEmpty());
+        assert (!userService.findAll().iterator().next().getLeadClasses().isEmpty());
+    }
+
+    @Test
+    void shouldHaveConnectionOnBothSidesUserUpdate () {
+        addTestUser();
+        addGroupClass();
+
+        User user = userService.findAll().iterator().next();
+        GroupClass groupClass = groupClassService.findAll().iterator().next();
+        user.addLeadClass(groupClass);
+        userService.update(user, user.getId());
+        assert (!userService.findAll().iterator().next().getLeadClasses().isEmpty());
+        assert (!groupClassService.findAll().iterator().next().getTrainers().isEmpty());
+    }
+    
     void addTestRoom () {
         Room room1 = new Room (1L,100);
         roomService.create(room1);
@@ -87,7 +140,7 @@ public class ServiceTest {
                 "password123",
                 "troy.bolton@easthigh.com",
                 "10",
-                Boolean.FALSE,
+                Boolean.TRUE,
                 Boolean.TRUE,
                 new HashSet<>());
         userService.create(user1);

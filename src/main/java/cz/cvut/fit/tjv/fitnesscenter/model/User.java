@@ -39,7 +39,7 @@ public class User {
     @NotNull
     private Boolean customer;
 
-    @ManyToMany(mappedBy = "trainers")
+    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
     private Set<GroupClass> leadClasses = new HashSet<>();
 
     public void addLeadClass(GroupClass groupClass) {
