@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -116,6 +117,67 @@ public class ServiceTest {
 
         assert (!userService.findById(user.getId()).get().getLeadClasses().isEmpty());
         assert (!groupClassService.findById(groupClass.getId()).get().getTrainers().isEmpty());
+    }
+
+    @Test
+    void shouldHaveConnectionOnBothSidesUserCreate () {
+        GroupClass groupClass = addGroupClass();
+        User user = new User (1L,
+                "Troy",
+                "Bolton",
+                "troybolton",
+                "password123",
+                "troy.bolton@easthigh.com",
+                "10",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                Collections.singleton(groupClass));
+        long userId = userService.create(user).getId();
+
+        assert (!userService.findById(userId).get().getLeadClasses().isEmpty());
+        assert (!groupClassService.findById(groupClass.getId()).get().getTrainers().isEmpty());
+    }
+
+    @Test
+    void shouldLeaveUserAloneDeleteGroupClass () {
+        GroupClass groupClass = addGroupClass();
+        User user = new User (1L,
+                "Troy",
+                "Bolton",
+                "troybolton",
+                "password123",
+                "troy.bolton@easthigh.com",
+                "10",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                Collections.singleton(groupClass));
+        long userId = userService.create(user).getId();
+
+        groupClassService.deleteById(groupClass.getId());
+
+        assert (groupClassService.findById(groupClass.getId()).isEmpty());
+        assert (userService.findById(userId).isPresent());
+        assert (!userService.findById(userId).get().getLeadClasses().contains(groupClass));
+    }
+
+    @Test
+    void shouldLeaveGroupClassAloneDeleteUser () {
+        User user = addTestUser();
+        GroupClass groupClass = new GroupClass(
+                1L,
+                LocalDateTime.of(2023, 3, 20, 9, 30),
+                LocalDateTime.of(2023, 3, 20, 10, 30),
+                100,
+                addTestRoom(),
+                addTestSportType(),
+                Collections.singleton(user));
+        long groupClassId = groupClassService.create(groupClass).getId();
+
+        userService.deleteById(user.getId());
+
+        assert (userService.findById(user.getId()).isEmpty());
+        assert (groupClassService.findById(groupClassId).isPresent());
+        assert (!groupClassService.findById(groupClassId).get().getTrainers().contains(user));
     }
 
     Room addTestRoom () {
