@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class RoomService implements ServiceInterface<Room>{
+public class RoomService implements ServiceInterface<Room> {
     RoomRepository repository;
 
     public Room create(Room entity) throws EntityStateException {

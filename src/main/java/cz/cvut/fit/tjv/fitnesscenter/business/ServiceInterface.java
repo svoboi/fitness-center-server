@@ -10,7 +10,7 @@ public interface ServiceInterface<EntityType> {
 
     public Collection<EntityType> findAll();
 
-    public EntityType update(EntityType entity, Long id) throws EntityStateException ;
+    public EntityType update(EntityType entity, Long id) throws EntityStateException;
 
     public void deleteById(Long id);
 }

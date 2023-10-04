@@ -10,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import static java.util.stream.Collectors.toList;
 
-@AllArgsConstructor @NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class AbstractController<EntityType> {
     public ServiceInterface<EntityType> service;
     public Mapper<EntityType> mapper;
@@ -21,8 +23,7 @@ public abstract class AbstractController<EntityType> {
     public ResponseEntity<Object> createProduct(@RequestBody EntityType entity) {
         try {
             return new ResponseEntity<>(mapper.toDto(service.create(entity)), HttpStatus.CREATED);
-        }
-        catch (EntityStateException e) {
+        } catch (EntityStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -33,7 +34,7 @@ public abstract class AbstractController<EntityType> {
     }
 
     @GetMapping("/{id}")
-    public  ResponseEntity<Object> readByID(@PathVariable Long id) {
+    public ResponseEntity<Object> readByID(@PathVariable Long id) {
         var result = service.findById(id);
         if (result.isPresent())
             return new ResponseEntity<>(mapper.toDto(result.get()), HttpStatus.OK);
@@ -45,8 +46,7 @@ public abstract class AbstractController<EntityType> {
     public ResponseEntity<Object> update(@RequestBody EntityType entity, @PathVariable Long id) {
         try {
             return new ResponseEntity<>(mapper.toDto(service.update(entity, id)), HttpStatus.OK);
-        }
-        catch (EntityStateException e) {
+        } catch (EntityStateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

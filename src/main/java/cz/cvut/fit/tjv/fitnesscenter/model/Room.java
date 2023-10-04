@@ -7,8 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Room {
     @Id

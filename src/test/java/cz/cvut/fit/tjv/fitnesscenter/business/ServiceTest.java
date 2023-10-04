@@ -4,16 +4,15 @@ import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -44,7 +43,7 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldKeepRoomInfo () {
+    void shouldKeepRoomInfo() {
         addTestRoom();
         var rooms = roomService.findAll();
         assert (rooms.iterator().hasNext());
@@ -52,7 +51,7 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldKeepSportTypeInfo () {
+    void shouldKeepSportTypeInfo() {
         addTestSportType();
         var sports = sportTypeService.findAll();
         assert (sports.iterator().hasNext());
@@ -60,14 +59,14 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldKeepUserInfo () {
+    void shouldKeepUserInfo() {
         addTestUser();
         var userOp = userService.findById(1L);
         assert (userOp.isPresent());
     }
 
     @Test
-    void shouldKeepGroupClassInfo () {
+    void shouldKeepGroupClassInfo() {
         addGroupClass();
         var groupClasses = groupClassService.findAll();
         assert (groupClasses.iterator().hasNext());
@@ -75,7 +74,7 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldHaveConnectionOnBothSidesGroupClassUpdate () {
+    void shouldHaveConnectionOnBothSidesGroupClassUpdate() {
         User user = addTestUser();
         GroupClass groupClassUpdated = new GroupClass(
                 addGroupClass().getId(),
@@ -92,7 +91,7 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldHaveConnectionOnBothSidesGroupClassCreate () {
+    void shouldHaveConnectionOnBothSidesGroupClassCreate() {
         User user = addTestUser();
         GroupClass groupClass = new GroupClass(
                 1L,
@@ -109,7 +108,7 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldHaveConnectionOnBothSidesUserUpdate () {
+    void shouldHaveConnectionOnBothSidesUserUpdate() {
         User user = addTestUser();
         GroupClass groupClass = addGroupClass();
         user.addLeadClass(groupClass);
@@ -120,9 +119,9 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldHaveConnectionOnBothSidesUserCreate () {
+    void shouldHaveConnectionOnBothSidesUserCreate() {
         GroupClass groupClass = addGroupClass();
-        User user = new User (1L,
+        User user = new User(1L,
                 "Troy",
                 "Bolton",
                 "troybolton",
@@ -139,9 +138,9 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldLeaveUserAloneDeleteGroupClass () {
+    void shouldLeaveUserAloneDeleteGroupClass() {
         GroupClass groupClass = addGroupClass();
-        User user = new User (1L,
+        User user = new User(1L,
                 "Troy",
                 "Bolton",
                 "troybolton",
@@ -161,7 +160,7 @@ public class ServiceTest {
     }
 
     @Test
-    void shouldLeaveGroupClassAloneDeleteUser () {
+    void shouldLeaveGroupClassAloneDeleteUser() {
         User user = addTestUser();
         GroupClass groupClass = new GroupClass(
                 1L,
@@ -180,16 +179,18 @@ public class ServiceTest {
         assert (!groupClassService.findById(groupClassId).get().getTrainers().contains(user));
     }
 
-    Room addTestRoom () {
-        Room room1 = new Room (1L,100);
+    Room addTestRoom() {
+        Room room1 = new Room(1L, 100);
         return roomService.create(room1);
     }
-    SportType addTestSportType () {
-        SportType sportType1 = new SportType (1L, "joga");
+
+    SportType addTestSportType() {
+        SportType sportType1 = new SportType(1L, "joga");
         return sportTypeService.create(sportType1);
     }
-    User addTestUser () {
-        User user1 = new User (1L,
+
+    User addTestUser() {
+        User user1 = new User(1L,
                 "Troy",
                 "Bolton",
                 "troybolton",
@@ -201,7 +202,8 @@ public class ServiceTest {
                 new HashSet<>());
         return userService.create(user1);
     }
-    GroupClass addGroupClass () {
+
+    GroupClass addGroupClass() {
         addTestRoom();
         addTestSportType();
         GroupClass groupClass1 = new GroupClass(1L,

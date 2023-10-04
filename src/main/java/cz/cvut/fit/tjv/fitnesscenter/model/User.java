@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "person")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class User {
     @Id
@@ -51,8 +53,8 @@ public class User {
     }
 
     @PreRemove
-    public void removeTrainersFromGroupClasses () {
-        for (GroupClass leadClass: leadClasses) {
+    public void removeTrainersFromGroupClasses() {
+        for (GroupClass leadClass : leadClasses) {
             leadClass.removeTrainer(this);
         }
     }

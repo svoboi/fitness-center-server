@@ -2,7 +2,6 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
-import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +72,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return roomId != null && roomService.findById(roomId).isPresent();
     }
 
-    public Boolean enoughCapacity (GroupClass groupClass) {
+    public Boolean enoughCapacity(GroupClass groupClass) {
         var room = roomService.findById(groupClass.getRoom().getId());
         if (room.isPresent()) {
             return groupClass.getCapacity() <= room.get().getCapacity();

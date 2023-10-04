@@ -7,8 +7,10 @@ import lombok.Setter;
 
 import java.util.Set;
 
-@Setter @Getter
-@AllArgsConstructor @NoArgsConstructor
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     public Long id;
 

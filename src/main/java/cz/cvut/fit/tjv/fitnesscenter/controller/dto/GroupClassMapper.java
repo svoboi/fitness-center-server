@@ -16,11 +16,11 @@ public class GroupClassMapper extends Mapper<GroupClass> {
         Set<Long> trainers = new HashSet<>();
         if (groupClass.getTrainers() != null) {
             trainers = groupClass
-                .getTrainers()
-                .stream()
-                .map(User::getId)
-                .collect(Collectors.toSet());
-    }
+                    .getTrainers()
+                    .stream()
+                    .map(User::getId)
+                    .collect(Collectors.toSet());
+        }
         return new GroupClassDto(groupClass.getId(),
                 groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getCapacity(),
                 groupClass.getRoom(), groupClass.getSportType(), trainers);

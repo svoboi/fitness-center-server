@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SportTypeRepository extends CrudRepository<SportType, Long>  {
+public interface SportTypeRepository extends CrudRepository<SportType, Long> {
 
 }
