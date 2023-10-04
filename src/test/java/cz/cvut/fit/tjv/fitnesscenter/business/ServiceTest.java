@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,65 +75,58 @@ public class ServiceTest {
 
     @Test
     void shouldHaveConnectionOnBothSidesGroupClassUpdate () {
-        addTestUser();
-        addGroupClass();
-        var user1 = userService.findAll();
-        GroupClass groupClass1 = new GroupClass(
-                groupClassService.findAll().iterator().next().getId(),
+        User user = addTestUser();
+        GroupClass groupClassUpdated = new GroupClass(
+                addGroupClass().getId(),
                 LocalDateTime.of(2023, 3, 20, 9, 30),
                 LocalDateTime.of(2023, 3, 20, 10, 30),
                 100,
                 roomService.findAll().iterator().next(),
                 sportTypeService.findAll().iterator().next(),
-                new HashSet<>(user1));
+                Collections.singleton(user));
+        GroupClass groupClass = groupClassService.update(groupClassUpdated, groupClassUpdated.getId());
 
-        groupClassService.update(groupClass1, groupClass1.getId());
-        assert (!groupClassService.findAll().iterator().next().getTrainers().isEmpty());
-        assert (!userService.findAll().iterator().next().getLeadClasses().isEmpty());
+        assert (!groupClassService.findById(groupClass.getId()).get().getTrainers().isEmpty());
+        assert (!userService.findById(user.getId()).get().getLeadClasses().isEmpty());
     }
 
     @Test
     void shouldHaveConnectionOnBothSidesGroupClassCreate () {
-        addTestUser();
-        addTestRoom();
-        addTestSportType();
-        var user1 = userService.findAll();
-        GroupClass groupClass1 = new GroupClass(
+        User user = addTestUser();
+        GroupClass groupClass = new GroupClass(
                 1L,
                 LocalDateTime.of(2023, 3, 20, 9, 30),
                 LocalDateTime.of(2023, 3, 20, 10, 30),
                 100,
-                roomService.findAll().iterator().next(),
-                sportTypeService.findAll().iterator().next(),
-                new HashSet<>(user1));
+                addTestRoom(),
+                addTestSportType(),
+                Collections.singleton(user));
+        long groupClassId = groupClassService.create(groupClass).getId();
 
-        groupClassService.create(groupClass1);
-        assert (!groupClassService.findAll().iterator().next().getTrainers().isEmpty());
-        assert (!userService.findAll().iterator().next().getLeadClasses().isEmpty());
+        assert (!groupClassService.findById(groupClassId).get().getTrainers().isEmpty());
+        assert (!userService.findById(user.getId()).get().getLeadClasses().isEmpty());
     }
 
     @Test
     void shouldHaveConnectionOnBothSidesUserUpdate () {
-        addTestUser();
-        addGroupClass();
-
-        User user = userService.findAll().iterator().next();
-        GroupClass groupClass = groupClassService.findAll().iterator().next();
+        User user = addTestUser();
+        GroupClass groupClass = addGroupClass();
         user.addLeadClass(groupClass);
         userService.update(user, user.getId());
-        assert (!userService.findAll().iterator().next().getLeadClasses().isEmpty());
-        assert (!groupClassService.findAll().iterator().next().getTrainers().isEmpty());
+
+        assert (!userService.findById(user.getId()).get().getLeadClasses().isEmpty());
+        assert (!groupClassService.findById(groupClass.getId()).get().getTrainers().isEmpty());
     }
-    
-    void addTestRoom () {
+
+    Room addTestRoom () {
         Room room1 = new Room (1L,100);
-        roomService.create(room1);
+        return roomService.create(room1);
     }
-    void addTestSportType () {
+    SportType addTestSportType () {
         SportType sportType1 = new SportType (1L, "joga");
-        sportTypeService.create(sportType1);
+        return sportTypeService.create(sportType1);
     }
-    void addTestUser () {
+    User addTestUser () {
         User user1 = new User (1L,
                 "Troy",
                 "Bolton",
@@ -143,9 +137,9 @@ public class ServiceTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 new HashSet<>());
-        userService.create(user1);
+        return userService.create(user1);
     }
-    void addGroupClass () {
+    GroupClass addGroupClass () {
         addTestRoom();
         addTestSportType();
         GroupClass groupClass1 = new GroupClass(1L,
@@ -155,7 +149,7 @@ public class ServiceTest {
                 roomService.findAll().iterator().next(),
                 sportTypeService.findAll().iterator().next(),
                 new HashSet<>());
-        groupClassService.create(groupClass1);
+        return groupClassService.create(groupClass1);
     }
 
 
