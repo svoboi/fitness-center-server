@@ -29,8 +29,9 @@ public class UserService implements ServiceInterface<User> {
         if (!leadClassesSetValid(user)) {
             throw new EntityStateException("at least one of the classes IDs is invalid");
         }
-        addUserToLeadClasses(user);
-        return repository.save(user);
+        User correctIdUser = repository.save(user);
+        addUserToLeadClasses(correctIdUser);
+        return repository.save(correctIdUser);
     }
 
     public Optional<User> findById(Long id) {
@@ -57,8 +58,9 @@ public class UserService implements ServiceInterface<User> {
             throw new EntityStateException("at least one of the classes IDs is invalid");
         }
         removeOriginalLeadClasses(repository.findById(pathId).get());
-        addUserToLeadClasses(user);
-        return repository.save(user);
+        User correctIdUser = repository.save(user);
+        addUserToLeadClasses(correctIdUser);
+        return repository.save(correctIdUser);
     }
 
     public void deleteById(Long id) {
@@ -81,7 +83,6 @@ public class UserService implements ServiceInterface<User> {
     }
 
     public void addUserToLeadClasses(User user) {
-        repository.save(user);
         for (var groupClass : user.getLeadClasses()) {
             var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
             groupClassFromRep.addTrainer(user);
