@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
+import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     GroupClassRepository repository;
     RoomService roomService;
 
+    UserRepository userRepository;
+
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))
             throw new EntityStateException("class with id " + groupClass.getId() + " already exists");
@@ -23,6 +26,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         //todo: check room availability
         if (!enoughCapacity(groupClass))
             throw new EntityStateException("not enough capacity in room");
+        if (!trainersSetOnlyEmployees(groupClass)) {
+            throw new EntityStateException("at least one of the users IDs is invalid or user isn't employee");
+        }
         return repository.save(groupClass);
     }
 
@@ -47,7 +53,21 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         //todo: check room availability
         if (!enoughCapacity(groupClass))
             throw new EntityStateException("not enough capacity in room");
+        if (!trainersSetOnlyEmployees(groupClass)) {
+            throw new EntityStateException("at least one of the users IDs is invalid or user isn't employee");
+        }
         return repository.save(groupClass);
+    }
+
+    public Boolean trainersSetOnlyEmployees(GroupClass groupClass) {
+        for (var user : groupClass.getTrainers()) {
+            Long userId = user.getId();
+            var userOp = userRepository.findById(userId);
+            if (userOp.isEmpty() || !userOp.get().getEmployee()) {
+                return Boolean.FALSE;
+            }
+        }
+        return Boolean.TRUE;
     }
 
     public void deleteById(Long id) {
