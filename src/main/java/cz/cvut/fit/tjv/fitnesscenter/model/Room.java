@@ -18,5 +18,5 @@ public class Room {
     public Long id;
 
     @NotNull
-    private int capacity;
+    private Integer capacity;
 }

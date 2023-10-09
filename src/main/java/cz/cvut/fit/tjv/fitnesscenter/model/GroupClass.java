@@ -26,7 +26,7 @@ public class GroupClass {
     @NotNull
     private LocalDateTime timeTo;
     @NotNull
-    private int capacity;
+    private Integer capacity;
 
     @NotNull
     @ManyToOne
