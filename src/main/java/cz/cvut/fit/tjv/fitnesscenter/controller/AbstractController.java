@@ -1,5 +1,6 @@
 package cz.cvut.fit.tjv.fitnesscenter.controller;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import cz.cvut.fit.tjv.fitnesscenter.business.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.business.ServiceInterface;
 import cz.cvut.fit.tjv.fitnesscenter.controller.dto.Mapper;
@@ -24,7 +25,7 @@ public abstract class AbstractController<EntityType> {
         try {
             return new ResponseEntity<>(mapper.toDto(service.create(entity)), HttpStatus.CREATED);
         } catch (EntityStateException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new TextNode(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -39,7 +40,7 @@ public abstract class AbstractController<EntityType> {
         if (result.isPresent())
             return new ResponseEntity<>(mapper.toDto(result.get()), HttpStatus.OK);
         else
-            return new ResponseEntity<>("Entity with id " + id + " doesn't exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new TextNode("Entity with id " + id + " doesn't exist"), HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
@@ -47,7 +48,7 @@ public abstract class AbstractController<EntityType> {
         try {
             return new ResponseEntity<>(mapper.toDto(service.update(entity, id)), HttpStatus.OK);
         } catch (EntityStateException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new TextNode(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -55,8 +56,8 @@ public abstract class AbstractController<EntityType> {
     public ResponseEntity<Object> delete(@PathVariable Long id) {
         if (service.findById(id).isPresent()) {
             service.deleteById(id);
-            return new ResponseEntity<>("Entity was deleted successfully", HttpStatus.OK);
+            return new ResponseEntity<>(new TextNode("Entity was deleted successfully"), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Entity with id " + id + " doesn't exist", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new TextNode("Entity with id " + id + " doesn't exist"), HttpStatus.BAD_REQUEST);
     }
 }
