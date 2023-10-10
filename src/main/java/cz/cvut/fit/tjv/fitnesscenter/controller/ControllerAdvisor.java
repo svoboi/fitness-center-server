@@ -1,8 +1,11 @@
 package cz.cvut.fit.tjv.fitnesscenter.controller;
 
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -60,6 +63,18 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("message", "Invalid entity, probably missing parameters.");
 
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e, HttpHeaders headers,
+            HttpStatusCode status, WebRequest request) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", e.getFieldError().getDefaultMessage());
+//        body.put("message", "Invalid entity: " + e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
