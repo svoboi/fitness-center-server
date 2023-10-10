@@ -43,11 +43,11 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     }
 
     public GroupClass update(GroupClass groupClass, Long pathId) throws EntityStateException {
+        if (!exists(groupClass))
+            throw new EntityStateException("class id missing or class with this id doesnt exist");
         if (!groupClass.getId().equals(pathId)) {
             throw new EntityStateException("conficting id in path and in body");
         }
-        if (!exists(groupClass))
-            throw new EntityStateException("class id missing or class with this id doesnt exist");
         if (groupClass.getRoom() != null && !roomExists(groupClass))
             throw new EntityStateException("room id missing or room with this id doesnt exist");
         //todo: check room availability
