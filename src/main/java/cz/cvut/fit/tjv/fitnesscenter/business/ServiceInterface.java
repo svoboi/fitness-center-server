@@ -1,5 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
+
 import java.util.Collection;
 import java.util.Optional;
 

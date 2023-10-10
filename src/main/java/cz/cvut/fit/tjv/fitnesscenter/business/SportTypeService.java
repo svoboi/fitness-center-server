@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.SportTypeRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

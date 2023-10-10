@@ -3,6 +3,7 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

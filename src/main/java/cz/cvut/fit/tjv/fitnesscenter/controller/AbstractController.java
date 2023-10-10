@@ -1,9 +1,9 @@
 package cz.cvut.fit.tjv.fitnesscenter.controller;
 
 import com.fasterxml.jackson.databind.node.TextNode;
-import cz.cvut.fit.tjv.fitnesscenter.business.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.business.ServiceInterface;
 import cz.cvut.fit.tjv.fitnesscenter.controller.dto.Mapper;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
