@@ -47,7 +47,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", e.getMessage() + " not found.");
+        body.put("message", e.getMessage() + " entity not found.");
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -69,7 +69,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "This room doesn't have enough much space.");
+        body.put("message", "This room doesn't have enough space.");
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
