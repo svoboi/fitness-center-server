@@ -25,7 +25,7 @@ public class GroupClass {
     private LocalDateTime timeFrom;
     @NotNull
     private LocalDateTime timeTo;
-    @NotNull
+    @NotNull(message = "Capacity is required.")
     private Integer capacity;
 
     @NotNull
