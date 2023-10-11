@@ -3,11 +3,11 @@ package cz.cvut.fit.tjv.fitnesscenter.controller;
 import com.fasterxml.jackson.databind.node.TextNode;
 import cz.cvut.fit.tjv.fitnesscenter.business.ServiceInterface;
 import cz.cvut.fit.tjv.fitnesscenter.controller.dto.Mapper;
-import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +21,8 @@ public abstract class AbstractController<EntityType> {
     public Mapper<EntityType> mapper;
 
     @PostMapping
-    public ResponseEntity<Object> createProduct(@RequestBody EntityType entity) {
-        try {
-            return new ResponseEntity<>(mapper.toDto(service.create(entity)), HttpStatus.CREATED);
-        } catch (EntityStateException e) {
-            return new ResponseEntity<>(new TextNode(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> createProduct(@RequestBody @Validated EntityType entity) {
+        return new ResponseEntity<>(mapper.toDto(service.create(entity)), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -44,12 +40,8 @@ public abstract class AbstractController<EntityType> {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@RequestBody EntityType entity, @PathVariable Long id) {
-        try {
-            return new ResponseEntity<>(mapper.toDto(service.update(entity, id)), HttpStatus.OK);
-        } catch (EntityStateException e) {
-            return new ResponseEntity<>(new TextNode(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> update(@RequestBody @Validated EntityType entity, @PathVariable Long id) {
+        return new ResponseEntity<>(mapper.toDto(service.update(entity, id)), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
