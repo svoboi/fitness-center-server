@@ -1,6 +1,9 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.RoomRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityNotFoundException;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import lombok.AllArgsConstructor;
@@ -19,7 +22,7 @@ public class RoomService implements ServiceInterface<Room> {
     public Room create(Room entity) throws EntityStateException {
         Long id = entity.getId();
         if (id != null && repository.existsById(id))
-            throw new EntityStateException("room with id " + entity.getId() + " already exists");
+            throw new ConflictingEntityExistsException();
         return repository.save(entity);
     }
 
@@ -35,16 +38,16 @@ public class RoomService implements ServiceInterface<Room> {
 
     public Room update(Room room, Long pathId) throws EntityStateException {
         if (!room.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+            throw new EntityIdentificationException();
         }
         Long id = room.getId();
         if (id == null)
-            throw new EntityStateException("room id missing");
+            throw new EntityIdentificationException();
         //todo: check room capacity
         if (repository.existsById(id))
             return repository.save(room);
         else
-            throw new EntityStateException("room with id " + id + " does not exist exists");
+            throw new EntityNotFoundException("Room");
     }
 
     public void deleteById(Long id) {

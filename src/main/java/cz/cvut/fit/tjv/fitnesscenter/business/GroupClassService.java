@@ -2,7 +2,7 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
-import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,14 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
 
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))
-            throw new EntityStateException("class with id " + groupClass.getId() + " already exists");
-        if (groupClass.getRoom() != null && !roomExists(groupClass))
-            throw new EntityStateException("room with id " + groupClass.getRoom().getId() + " doesn't exist");
+            throw new ConflictingEntityExistsException();
+        if (!roomExists(groupClass))
+            throw new EntityNotFoundException("Room");
         //todo: check room availability
         if (!enoughCapacity(groupClass))
-            throw new EntityStateException("not enough capacity in room");
+            throw new NotEnoughCapacityException();
         if (!trainersSetOnlyEmployees(groupClass)) {
-            throw new EntityStateException("at least one of the users IDs is invalid or user isn't employee");
+            throw new UserNotTrainerException();
         }
         return repository.save(groupClass);
     }
@@ -44,18 +44,18 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     }
 
     public GroupClass update(GroupClass groupClass, Long pathId) throws EntityStateException {
-        if (!exists(groupClass))
-            throw new EntityStateException("class id missing or class with this id doesnt exist");
-        if (!groupClass.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+        if (groupClass.getId() == null || !groupClass.getId().equals(pathId)) {
+            throw new EntityIdentificationException();
         }
-        if (groupClass.getRoom() != null && !roomExists(groupClass))
-            throw new EntityStateException("room id missing or room with this id doesnt exist");
+        if (!exists(groupClass))
+            throw new EntityNotFoundException("Class");
+        if (!roomExists(groupClass))
+            throw new EntityNotFoundException("Room");
         //todo: check room availability
         if (!enoughCapacity(groupClass))
-            throw new EntityStateException("not enough capacity in room");
+            throw new NotEnoughCapacityException();
         if (!trainersSetOnlyEmployees(groupClass)) {
-            throw new EntityStateException("at least one of the users IDs is invalid or user isn't employee");
+            throw new UserNotTrainerException();
         }
         return repository.save(groupClass);
     }

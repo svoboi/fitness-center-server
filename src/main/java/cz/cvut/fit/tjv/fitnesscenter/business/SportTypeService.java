@@ -1,6 +1,9 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.SportTypeRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityNotFoundException;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import lombok.AllArgsConstructor;
@@ -19,7 +22,7 @@ public class SportTypeService implements ServiceInterface<SportType> {
     public SportType create(SportType sportType) throws EntityStateException {
         Long id = sportType.getId();
         if (id != null && repository.existsById(id))
-            throw new EntityStateException("room with id " + sportType.getId() + " already exists");
+            throw new ConflictingEntityExistsException();
         return repository.save(sportType);
     }
 
@@ -35,16 +38,16 @@ public class SportTypeService implements ServiceInterface<SportType> {
 
     public SportType update(SportType sportType, Long pathId) throws EntityStateException {
         if (!sportType.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+            throw new EntityIdentificationException();
         }
         Long id = sportType.getId();
         if (id == null)
-            throw new EntityStateException("sportType id missing");
+            throw new EntityIdentificationException();
         //todo: check room capacity
         if (repository.existsById(id))
             return repository.save(sportType);
         else
-            throw new EntityStateException("sportType with id " + id + " does not exist exists");
+            throw new EntityNotFoundException();
     }
 
     public void deleteById(Long id) {

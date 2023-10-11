@@ -3,7 +3,7 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
-import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,12 +23,12 @@ public class UserService implements ServiceInterface<User> {
     public User create(User user) throws EntityStateException {
         Long id = user.getId();
         if (id != null && exists(user))
-            throw new EntityStateException("person with id " + user.getId() + " already exists");
+            throw new ConflictingEntityExistsException();
         if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
-            throw new EntityStateException("non-employee cant teach classes");
+            throw new UserNotTrainerException();
         }
         if (!leadClassesSetValid(user)) {
-            throw new EntityStateException("at least one of the classes IDs is invalid");
+            throw new EntityNotFoundException("Class");
         }
         User correctIdUser = repository.save(user);
         addUserToLeadClasses(correctIdUser);
@@ -47,16 +47,16 @@ public class UserService implements ServiceInterface<User> {
 
     public User update(User user, Long pathId) throws EntityStateException {
         if (!user.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+            throw new EntityIdentificationException();
         }
         if (!exists(user)) {
-            throw new EntityStateException("class id missing or class with this id doesnt exist");
+            throw new EntityNotFoundException("User");
         }
         if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
-            throw new EntityStateException("non-employee cant teach classes");
+            throw new UserNotTrainerException();
         }
         if (!leadClassesSetValid(user)) {
-            throw new EntityStateException("at least one of the classes IDs is invalid");
+            throw new EntityNotFoundException("Class");
         }
         removeOriginalLeadClasses(repository.findById(pathId).get());
         User correctIdUser = repository.save(user);
