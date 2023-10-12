@@ -1,6 +1,5 @@
 package cz.cvut.fit.tjv.fitnesscenter.controller;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import cz.cvut.fit.tjv.fitnesscenter.business.ServiceInterface;
 import cz.cvut.fit.tjv.fitnesscenter.controller.dto.Mapper;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,11 +34,7 @@ public abstract class AbstractController<EntityType> {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> readByID(@PathVariable Long id) {
-        var result = service.findById(id);
-        if (result.isPresent())
-            return new ResponseEntity<>(mapper.toDto(result.get()), HttpStatus.OK);
-        else
-            return new ResponseEntity<>(new TextNode("Entity with id " + id + " doesn't exist"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(mapper.toDto(service.findById(id).get()), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -46,10 +44,10 @@ public abstract class AbstractController<EntityType> {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
-        if (service.findById(id).isPresent()) {
-            service.deleteById(id);
-            return new ResponseEntity<>(new TextNode("Entity was deleted successfully"), HttpStatus.OK);
+        if (service.findById(id).isEmpty()) {
+            throw new NoSuchElementException();
         }
-        return new ResponseEntity<>(new TextNode("Entity with id " + id + " doesn't exist"), HttpStatus.BAD_REQUEST);
+        service.deleteById(id);
+        return new ResponseEntity<>(new HashMap<>(Map.of("message", "Entity deleted successfully")), HttpStatus.OK);
     }
 }
