@@ -4,7 +4,8 @@ import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -32,7 +33,7 @@ class JpaRepositoryTest {
     }
 
     @Test
-    void shouldKeepRoomInfo () {
+    void shouldKeepRoomInfo() {
         addTestRoom();
         var rooms = roomRepository.findAll();
         assert (rooms.iterator().hasNext());
@@ -40,7 +41,7 @@ class JpaRepositoryTest {
     }
 
     @Test
-    void shouldKeepSportTypeInfo () {
+    void shouldKeepSportTypeInfo() {
         addTestSportType();
         var sports = sportTypeRepository.findAll();
         assert (sports.iterator().hasNext());
@@ -48,30 +49,32 @@ class JpaRepositoryTest {
     }
 
     @Test
-    void shouldKeepUserInfo () {
+    void shouldKeepUserInfo() {
         addTestUser();
         var userOp = userRepository.findById(1L);
         assert (userOp.isPresent());
     }
 
     @Test
-    void shouldKeepGroupClassInfo () {
+    void shouldKeepGroupClassInfo() {
         addGroupClass();
         var groupClasses = groupClassRepository.findAll();
         assert (groupClasses.iterator().hasNext());
         assert (groupClasses.iterator().next().getCapacity() == 100);
     }
 
-    void addTestRoom () {
-        Room room1 = new Room (1L,100);
+    void addTestRoom() {
+        Room room1 = new Room(1L, 100, "one");
         roomRepository.save(room1);
     }
-    void addTestSportType () {
-        SportType sportType1 = new SportType (1L, "joga");
+
+    void addTestSportType() {
+        SportType sportType1 = new SportType(1L, "joga");
         sportTypeRepository.save(sportType1);
     }
-    void addTestUser () {
-        User user1 = new User (1L,
+
+    void addTestUser() {
+        User user1 = new User(1L,
                 "Troy",
                 "Bolton",
                 "troybolton",
@@ -83,7 +86,8 @@ class JpaRepositoryTest {
                 new HashSet<>());
         userRepository.save(user1);
     }
-    void addGroupClass () {
+
+    void addGroupClass() {
         addTestRoom();
         addTestSportType();
         GroupClass groupClass1 = new GroupClass(1L,

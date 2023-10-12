@@ -180,7 +180,7 @@ public class ServiceTest {
     }
 
     Room addTestRoom() {
-        Room room1 = new Room(1L, 100);
+        Room room1 = new Room(1L, 100, "one");
         return roomService.create(room1);
     }
 
