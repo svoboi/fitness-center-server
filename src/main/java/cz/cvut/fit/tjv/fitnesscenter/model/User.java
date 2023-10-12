@@ -22,25 +22,29 @@ public class User {
     @GeneratedValue
     public Long id;
 
-    @NotBlank
+    @NotBlank(message = "firstName is required.")
     private String firstName;
-    @NotBlank
+
+    @NotBlank(message = "lastName is required.")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "username is required.")
     private String username;
-    @NotBlank
+
+    @NotBlank(message = "password is required.")
     private String password;
 
     @Email
-    @NotBlank
+    @NotBlank(message = "emailAddress is required.")
     private String emailAddress;
-    @NotBlank
+
+    @NotBlank(message = "phoneNumber is required.")
     private String phoneNumber;
 
-    @NotNull
+    @NotNull(message = "employee is required.")
     private Boolean employee;
-    @NotNull
+
+    @NotNull(message = "customer is required.")
     private Boolean customer;
 
     @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
