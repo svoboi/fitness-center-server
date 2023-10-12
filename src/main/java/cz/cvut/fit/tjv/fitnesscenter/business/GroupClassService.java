@@ -7,7 +7,10 @@ import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -71,11 +74,8 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     }
 
     public Collection<GroupClass> findAllByRoom(Long id) {
-        var room = roomService.findById(id);
-        if (room.isPresent()) {
-            return repository.findAllByRoom(room.get());
-        }
-        return Collections.emptyList();
+        var room = roomService.findById(id).orElseThrow(() -> new EntityNotFoundException("Room"));
+        return repository.findAllByRoom(room);
     }
 
     public Boolean exists(GroupClass groupClass) {
