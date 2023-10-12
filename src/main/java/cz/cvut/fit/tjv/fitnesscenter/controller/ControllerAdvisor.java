@@ -101,6 +101,17 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UsernameTakenException.class)
+    public ResponseEntity<Object> handleUsernameTakenException(
+            UsernameTakenException e, WebRequest request) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", "This username is already taken, try a different one.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UserNotTrainerException.class)
     public ResponseEntity<Object> handleUserNotTrainerException(
             UserNotTrainerException e, WebRequest request) {
