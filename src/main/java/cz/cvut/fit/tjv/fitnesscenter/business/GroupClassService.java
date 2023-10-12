@@ -22,8 +22,6 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))
             throw new ConflictingEntityExistsException();
-        if (!roomExists(groupClass))
-            throw new EntityNotFoundException("Room");
         //todo: check room availability
         if (!enoughCapacity(groupClass))
             throw new NotEnoughCapacityException();
@@ -49,8 +47,6 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         if (!exists(groupClass))
             throw new EntityNotFoundException("Class");
-        if (!roomExists(groupClass))
-            throw new EntityNotFoundException("Room");
         //todo: check room availability
         if (!enoughCapacity(groupClass))
             throw new NotEnoughCapacityException();
@@ -62,9 +58,8 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
 
     public Boolean trainersSetOnlyEmployees(GroupClass groupClass) {
         for (var user : groupClass.getTrainers()) {
-            Long userId = user.getId();
-            var userOp = userRepository.findById(userId);
-            if (userOp.isEmpty() || !userOp.get().getEmployee()) {
+            var userOp = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User"));
+            if (!userOp.getEmployee()) {
                 return Boolean.FALSE;
             }
         }
@@ -88,16 +83,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return id != null && repository.existsById(id);
     }
 
-    public Boolean roomExists(GroupClass groupClass) {
-        Long roomId = groupClass.getRoom().getId();
-        return roomId != null && roomService.findById(roomId).isPresent();
-    }
-
     public Boolean enoughCapacity(GroupClass groupClass) {
-        var room = roomService.findById(groupClass.getRoom().getId());
-        if (room.isPresent()) {
-            return groupClass.getCapacity() <= room.get().getCapacity();
-        }
-        return false;
+        var room = roomService.findById(groupClass.getRoom().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Room"));
+        return groupClass.getCapacity() <= room.getCapacity();
     }
 }
