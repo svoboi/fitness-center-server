@@ -21,18 +21,18 @@ public class GroupClass {
     @GeneratedValue
     public Long id;
 
-    @NotNull
+    @NotNull(message = "timeFrom is required")
     private LocalDateTime timeFrom;
-    @NotNull
+    @NotNull(message = "timeTo is required")
     private LocalDateTime timeTo;
-    @NotNull(message = "Capacity is required.")
+    @NotNull(message = "capacity is required.")
     private Integer capacity;
 
-    @NotNull
+    @NotNull(message = "room is required.")
     @ManyToOne
     private Room room;
 
-    @NotNull
+    @NotNull(message = "sportType is required.")
     @ManyToOne
     private SportType sportType;
 
