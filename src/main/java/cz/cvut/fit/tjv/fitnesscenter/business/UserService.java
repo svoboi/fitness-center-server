@@ -21,15 +21,12 @@ public class UserService implements ServiceInterface<User> {
     GroupClassRepository groupClassRepository;
 
     public User create(User user) throws EntityStateException {
-        Long id = user.getId();
-        if (id != null && exists(user))
+        if (user.getId() != null && exists(user))
             throw new ConflictingEntityExistsException();
         if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
             throw new UserNotTrainerException();
         }
-        if (!leadClassesSetValid(user)) {
-            throw new EntityNotFoundException("Class");
-        }
+        validateLeadClasses(user);
         User correctIdUser = repository.save(user);
         addUserToLeadClasses(correctIdUser);
         return repository.save(correctIdUser);
@@ -55,9 +52,7 @@ public class UserService implements ServiceInterface<User> {
         if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
             throw new UserNotTrainerException();
         }
-        if (!leadClassesSetValid(user)) {
-            throw new EntityNotFoundException("Class");
-        }
+        validateLeadClasses(user);
         removeOriginalLeadClasses(repository.findById(pathId).get());
         User correctIdUser = repository.save(user);
         addUserToLeadClasses(correctIdUser);
@@ -73,14 +68,11 @@ public class UserService implements ServiceInterface<User> {
         return id != null && repository.existsById(id);
     }
 
-    public Boolean leadClassesSetValid(User user) {
+    public void validateLeadClasses(User user) {
         for (var groupClass : user.getLeadClasses()) {
             Long groupClassId = groupClass.getId();
-            if (groupClassRepository.findById(groupClassId).isEmpty()) {
-                return Boolean.FALSE;
-            }
+            groupClassRepository.findById(groupClassId).orElseThrow(() -> new EntityNotFoundException("Class"));
         }
-        return Boolean.TRUE;
     }
 
     public void addUserToLeadClasses(User user) {

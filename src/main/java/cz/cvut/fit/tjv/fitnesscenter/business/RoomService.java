@@ -19,11 +19,10 @@ import java.util.Optional;
 public class RoomService implements ServiceInterface<Room> {
     RoomRepository repository;
 
-    public Room create(Room entity) throws EntityStateException {
-        Long id = entity.getId();
-        if (id != null && repository.existsById(id))
+    public Room create(Room room) throws EntityStateException {
+        if (exists(room))
             throw new ConflictingEntityExistsException();
-        return repository.save(entity);
+        return repository.save(room);
     }
 
     public Optional<Room> findById(Long id) {
@@ -37,21 +36,21 @@ public class RoomService implements ServiceInterface<Room> {
     }
 
     public Room update(Room room, Long pathId) throws EntityStateException {
-        if (!room.getId().equals(pathId)) {
+        if (room.getId() == null || !room.getId().equals(pathId)) {
             throw new EntityIdentificationException();
         }
-        Long id = room.getId();
-        if (id == null)
-            throw new EntityIdentificationException();
-        //todo: check room capacity
-        if (repository.existsById(id))
-            return repository.save(room);
-        else
+        if (!repository.existsById(room.getId())) {
             throw new EntityNotFoundException("Room");
+        }
+        return repository.save(room);
     }
 
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
 
+    public Boolean exists(Room room) {
+        Long id = room.getId();
+        return id != null && repository.existsById(id);
+    }
 }

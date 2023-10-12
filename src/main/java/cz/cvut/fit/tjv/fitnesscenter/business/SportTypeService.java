@@ -20,8 +20,7 @@ public class SportTypeService implements ServiceInterface<SportType> {
     SportTypeRepository repository;
 
     public SportType create(SportType sportType) throws EntityStateException {
-        Long id = sportType.getId();
-        if (id != null && repository.existsById(id))
+        if (exists(sportType))
             throw new ConflictingEntityExistsException();
         return repository.save(sportType);
     }
@@ -37,20 +36,21 @@ public class SportTypeService implements ServiceInterface<SportType> {
     }
 
     public SportType update(SportType sportType, Long pathId) throws EntityStateException {
-        if (!sportType.getId().equals(pathId)) {
+        if (sportType.getId() == null || !sportType.getId().equals(pathId)) {
             throw new EntityIdentificationException();
         }
-        Long id = sportType.getId();
-        if (id == null)
-            throw new EntityIdentificationException();
-        //todo: check room capacity
-        if (repository.existsById(id))
-            return repository.save(sportType);
-        else
-            throw new EntityNotFoundException();
+        if (!repository.existsById(sportType.getId())) {
+            throw new EntityNotFoundException("Room");
+        }
+        return repository.save(sportType);
     }
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public Boolean exists(SportType sportType) {
+        Long id = sportType.getId();
+        return id != null && repository.existsById(id);
     }
 }
