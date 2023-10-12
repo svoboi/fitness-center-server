@@ -3,7 +3,7 @@ package cz.cvut.fit.tjv.fitnesscenter.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -17,6 +17,6 @@ public class Room {
     @GeneratedValue
     public Long id;
 
-    @NotNull
+    @NotBlank(message = "capacity is required.")
     private Integer capacity;
 }
