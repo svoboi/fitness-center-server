@@ -1,0 +1,578 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Fitness center backend API
+  description: backend API for Fitness center
+  contact:
+    name: BackEnd support
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /groupClasses:
+    post:
+      description: Upload json file as new class
+      operationId: "upload_group_class"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupClass'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupClass'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      tags:
+        - GroupClass
+    get:
+      description: Get all classes
+      operationId: "get_group_classes"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupClass'
+      tags:
+        - GroupClass
+
+  /groupClasses/{id}:
+    get:
+      description: Get class by id
+      operationId: "get_group_class"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the class to retrieve
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupClass'
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
+    put:
+      description: Put group class by id
+      operationId: "put_group_class"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the group class to put
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupClass'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupClass'
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
+    delete:
+      description: Delete class by id
+      operationId: "delete_group_class"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the class to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
+
+  /groupClasses/room/{id}:
+    get:
+      description: Filter group classes by room id
+      operationId: "filter_group_classes"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the room for which classes are retrieved
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupClass'
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
+
+  /users:
+    post:
+      description: Upload json file as new user
+      operationId: "upload_user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      tags:
+        - User
+    get:
+      description: Get all users
+      operationId: "get_users"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      tags:
+        - User
+
+  /users/{id}:
+    get:
+      description: Get user by id
+      operationId: "get_user"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+      tags:
+        - User
+    put:
+      description: Put user by id
+      operationId: "put_user"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user to put
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+      tags:
+        - User
+    delete:
+      description: Delete user by id
+      operationId: "delete_user"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+      tags:
+        - User
+
+  /rooms:
+    post:
+      description: Upload json file as new room
+      operationId: "upload_room"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      tags:
+        - Room
+    get:
+      description: Get all rooms
+      operationId: "get_rooms"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+      tags:
+        - Room
+
+  /rooms/{id}:
+    get:
+      description: Get room by id
+      operationId: "get_room"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the room to retrieve
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Not Found
+      tags:
+        - Room
+    put:
+      description: Put room by id
+      operationId: "put_room"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the room to put
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Not Found
+      tags:
+        - Room
+    delete:
+      description: Delete room by id
+      operationId: "delete_room"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the room to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+      tags:
+        - Room
+
+  /sportTypes:
+    post:
+      description: Upload json file as new sport type
+      operationId: "upload_sport_type"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SportType'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportType'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      tags:
+        - SportType
+    get:
+      description: Get all sport types
+      operationId: "get_sport_types"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SportType'
+      tags:
+        - SportType
+
+  /sportTypes/{id}:
+    get:
+      description: Get sport type by id
+      operationId: "get_sport_type"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the sport type to retrieve
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportType'
+        '404':
+          description: Not Found
+      tags:
+        - SportType
+    put:
+      description: Put sport type by id
+      operationId: "put_sport_type"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the sport type to put
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SportType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportType'
+        '404':
+          description: Not Found
+      tags:
+        - SportType
+    delete:
+      description: Delete sport type by id
+      operationId: "delete_sport_type"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the sport type to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+      tags:
+        - SportType
+
+
+components:
+  schemas:
+    GroupClass:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        timeFrom:
+          type: string
+          format: date-time
+          example: "2017-07-21T09:30:00Z"
+        timeTo:
+          type: string
+          format: date-time
+          example: "2017-07-21T10:30:00Z"
+        capacity:
+          type: number
+          format: int64
+          example: 10
+        room:
+          type: object
+          example: { "id": 1 }
+        sportType:
+          type: object
+          example: { "id": 1 }
+      required:
+        - day
+        - timeFro
+        - timeTo
+        - capacity
+        - sportType
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        firstName:
+          type: string
+          example: "Troy"
+        lastName:
+          type: string
+          example: "Bolton"
+        username:
+          type: string
+          example: "troybolton"
+        password:
+          type: string
+          example: "password123"
+        emailAddress:
+          type: string
+          format: email
+          example: "troy.bolton@easthigh.com"
+        phoneNumber:
+          type: number
+          format: int64
+          example: 10
+        employee:
+          type: boolean
+          example: false
+        customer:
+          type: boolean
+          example: true
+      required:
+        - firstName
+        - lastName
+        - emailAddress
+        - employee
+        - customer
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        capacity:
+          type: integer
+          format: int64
+          example: 100
+        name:
+          type: string
+          example: "big gym"
+    SportType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        typeName:
+          type: string
+          example: "joga"
+
+tags:
+  - name: GroupClass
+    description: Everything about group classes
+  - name: User
+    description: Everything about users
+  - name: Room
+    description: Everything about rooms
+  - name: SportType
+    description: Everything about sport types
+  - name: Unused
+    description: Unused
