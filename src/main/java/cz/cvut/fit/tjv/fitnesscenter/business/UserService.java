@@ -26,6 +26,7 @@ public class UserService implements ServiceInterface<User> {
         if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
             throw new UserNotTrainerException();
         }
+        validateUsername(user);
         validateLeadClasses(user);
         User correctIdUser = repository.save(user);
         addUserToLeadClasses(correctIdUser);
@@ -52,6 +53,7 @@ public class UserService implements ServiceInterface<User> {
         if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
             throw new UserNotTrainerException();
         }
+        validateUsername(user);
         validateLeadClasses(user);
         removeOriginalLeadClasses(repository.findById(pathId).get());
         User correctIdUser = repository.save(user);
@@ -88,6 +90,12 @@ public class UserService implements ServiceInterface<User> {
             var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
             groupClassFromRep.removeTrainer(user);
             groupClassRepository.save(groupClassFromRep);
+        }
+    }
+
+    public void validateUsername(User user) {
+        if (repository.findByUsername(user.getUsername()).isPresent()) {
+            throw new UsernameTakenException();
         }
     }
 }
