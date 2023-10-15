@@ -490,11 +490,17 @@ components:
           format: int64
           example: 10
         room:
-          type: object
-          example: { "id": 1 }
+          $ref: '#/components/schemas/Room'
         sportType:
-          type: object
-          example: { "id": 1 }
+          $ref: '#/components/schemas/SportType'
+        trainers:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+          example: [ { "id": 1 }, { "id": 2 } ]
       required:
         - day
         - timeFro
@@ -534,6 +540,14 @@ components:
         customer:
           type: boolean
           example: true
+        leadClasses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+          example: [ { "id": 1 }, { "id": 2 } ]
       required:
         - firstName
         - lastName
