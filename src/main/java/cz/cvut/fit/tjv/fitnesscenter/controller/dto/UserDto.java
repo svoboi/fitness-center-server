@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.Map;
+import java.util.Vector;
 
 @Setter
 @Getter
@@ -25,5 +26,5 @@ public class UserDto {
     private Boolean employee;
     private Boolean customer;
 
-    private Set<Long> leadClasses;
+    private Vector<Map<String, Long>> leadClasses;
 }

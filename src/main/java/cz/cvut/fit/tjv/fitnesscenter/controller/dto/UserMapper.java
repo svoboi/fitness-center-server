@@ -1,24 +1,20 @@
 package cz.cvut.fit.tjv.fitnesscenter.controller.dto;
 
-import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Vector;
 
 @Component
 public class UserMapper extends Mapper<User> {
     @Override
     public Object toDto(User user) {
-        Set<Long> leadClasses = new HashSet<>();
+        Vector<Map<String, Long>> leadClasses = new Vector<>();
         if (user.getLeadClasses() != null) {
-            leadClasses = user
-                    .getLeadClasses()
-                    .stream()
-                    .map(GroupClass::getId)
-                    .collect(Collectors.toSet());
+            for (var el : user.getLeadClasses()) {
+                leadClasses.add(Map.of("id", el.getId()));
+            }
         }
 
         return new UserDto(user.getId(), user.getFirstName(), user.getLastName(),
