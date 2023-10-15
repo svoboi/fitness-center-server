@@ -22,9 +22,9 @@ public class GroupClassDto {
     private LocalDateTime timeTo;
     private int capacity;
 
-    Room room;
+    private Room room;
 
-    SportType sportType;
+    private SportType sportType;
 
-    Vector<Map<String, Long>> trainers;
+    private Vector<Map<String, Long>> trainers;
 }
