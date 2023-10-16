@@ -26,54 +26,55 @@ class JpaRepositoryTest {
 
     @AfterEach
     void tearDown() {
+        groupClassRepository.deleteAll();
+        userRepository.deleteAll();
         roomRepository.deleteAll();
         sportTypeRepository.deleteAll();
-        userRepository.deleteAll();
-        groupClassRepository.deleteAll();
     }
 
     @Test
     void shouldKeepRoomInfo() {
-        addTestRoom();
-        var rooms = roomRepository.findAll();
-        assert (rooms.iterator().hasNext());
-        assert (rooms.iterator().next().getCapacity() == 100);
+        Room room = addTestRoom();
+        var roomOp = roomRepository.findById(room.getId());
+        assert (roomOp.isPresent());
+        assert (roomOp.get().getCapacity() == 100);
     }
 
     @Test
     void shouldKeepSportTypeInfo() {
-        addTestSportType();
-        var sports = sportTypeRepository.findAll();
-        assert (sports.iterator().hasNext());
-        assert (sports.iterator().next().getTypeName().equals("joga"));
+        SportType sportType = addTestSportType();
+        var sportOp = sportTypeRepository.findById(sportType.getId());
+        assert (sportOp.isPresent());
+        assert (sportOp.get().getTypeName().equals("joga"));
     }
 
     @Test
     void shouldKeepUserInfo() {
-        addTestUser();
-        var userOp = userRepository.findById(1L);
+        User user = addTestUser();
+        var userOp = userRepository.findById(user.getId());
         assert (userOp.isPresent());
+        assert (userOp.get().getUsername().equals("troybolton"));
     }
 
     @Test
     void shouldKeepGroupClassInfo() {
-        addGroupClass();
-        var groupClasses = groupClassRepository.findAll();
-        assert (groupClasses.iterator().hasNext());
-        assert (groupClasses.iterator().next().getCapacity() == 100);
+        GroupClass groupClass = addGroupClass();
+        var groupClassOp = groupClassRepository.findById(groupClass.getId());
+        assert (groupClassOp.isPresent());
+        assert (groupClassOp.get().getCapacity() == 100);
     }
 
-    void addTestRoom() {
+    Room addTestRoom() {
         Room room1 = new Room(1L, 100, "one");
-        roomRepository.save(room1);
+        return roomRepository.save(room1);
     }
 
-    void addTestSportType() {
+    SportType addTestSportType() {
         SportType sportType1 = new SportType(1L, "joga");
-        sportTypeRepository.save(sportType1);
+        return sportTypeRepository.save(sportType1);
     }
 
-    void addTestUser() {
+    User addTestUser() {
         User user1 = new User(1L,
                 "Troy",
                 "Bolton",
@@ -84,10 +85,10 @@ class JpaRepositoryTest {
                 Boolean.FALSE,
                 Boolean.TRUE,
                 new HashSet<>());
-        userRepository.save(user1);
+        return userRepository.save(user1);
     }
 
-    void addGroupClass() {
+    GroupClass addGroupClass() {
         addTestRoom();
         addTestSportType();
         GroupClass groupClass1 = new GroupClass(1L,
@@ -97,6 +98,6 @@ class JpaRepositoryTest {
                 roomRepository.findAll().iterator().next(),
                 sportTypeRepository.findAll().iterator().next(),
                 new HashSet<>());
-        groupClassRepository.save(groupClass1);
+        return groupClassRepository.save(groupClass1);
     }
 }
