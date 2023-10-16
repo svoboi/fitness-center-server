@@ -28,10 +28,18 @@ public class ServiceTest {
 
     @AfterEach
     void tearDown() {
-        groupClassService.repository.deleteAll();
-        roomService.repository.deleteAll();
-        sportTypeService.repository.deleteAll();
-        userService.repository.deleteAll();
+        for (var el : groupClassService.findAll()) {
+            groupClassService.deleteById(el.getId());
+        }
+        for (var el : roomService.findAll()) {
+            roomService.deleteById(el.getId());
+        }
+        for (var el : sportTypeService.findAll()) {
+            sportTypeService.deleteById(el.getId());
+        }
+        for (var el : userService.findAll()) {
+            userService.deleteById(el.getId());
+        }
     }
 
     @Test
