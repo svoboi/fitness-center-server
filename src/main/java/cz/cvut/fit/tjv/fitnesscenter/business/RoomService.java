@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class RoomService implements ServiceInterface<Room> {
-    RoomRepository repository;
+    private RoomRepository repository;
 
     public Room create(Room room) throws EntityStateException {
         if (exists(room))

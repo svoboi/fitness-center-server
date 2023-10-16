@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SportTypeService implements ServiceInterface<SportType> {
-    SportTypeRepository repository;
+    private SportTypeRepository repository;
 
     public SportType create(SportType sportType) throws EntityStateException {
         if (exists(sportType))

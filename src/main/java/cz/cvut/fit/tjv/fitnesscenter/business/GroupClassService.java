@@ -17,10 +17,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GroupClassService implements ServiceInterface<GroupClass> {
 
-    GroupClassRepository repository;
-    RoomService roomService;
-
-    UserRepository userRepository;
+    private GroupClassRepository repository;
+    private RoomService roomService;
+    private UserRepository userRepository;
 
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))

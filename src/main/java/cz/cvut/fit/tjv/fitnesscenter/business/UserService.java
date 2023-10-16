@@ -17,8 +17,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService implements ServiceInterface<User> {
 
-    UserRepository repository;
-    GroupClassRepository groupClassRepository;
+    private UserRepository repository;
+    private GroupClassRepository groupClassRepository;
 
     public User create(User user) throws EntityStateException {
         if (user.getId() != null && exists(user))
