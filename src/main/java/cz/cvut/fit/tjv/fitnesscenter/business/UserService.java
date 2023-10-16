@@ -4,10 +4,13 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
+import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,6 +71,25 @@ public class UserService implements ServiceInterface<User> {
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public Integer countHoursByUserAndMonth(Long userId, LocalDateTime givenTimeFrom, LocalDateTime givenTimeTo) {
+        User user = repository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User"));
+        Collection<GroupClass> groupClasses =
+                groupClassRepository.findAllByTimeFromBetweenAndTrainersContainingOrTimeToBetweenAndTrainersContaining
+                        (givenTimeFrom, givenTimeTo, user, givenTimeFrom, givenTimeTo, user);
+        int workedMinutes = 0;
+        for (GroupClass groupClass : groupClasses) {
+            if (groupClass.getTimeFrom().isBefore(givenTimeFrom)) {
+                // counting time in hours: https://stackoverflow.com/questions/25747499/java-8-difference-between-two-localdatetime-in-multiple-units
+                workedMinutes += Duration.between(givenTimeFrom, groupClass.getTimeTo()).toMinutes();
+            } else if (groupClass.getTimeTo().isAfter(givenTimeTo)) {
+                workedMinutes += Duration.between(groupClass.getTimeFrom(), givenTimeTo).toMinutes();
+            } else {
+                workedMinutes += Duration.between(groupClass.getTimeFrom(), groupClass.getTimeTo()).toMinutes();
+            }
+        }
+        return workedMinutes / 60;
     }
 
     public Boolean exists(User user) {
