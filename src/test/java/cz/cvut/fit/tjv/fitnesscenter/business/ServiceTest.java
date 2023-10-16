@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -187,18 +188,70 @@ public class ServiceTest {
         assert (!groupClassService.findById(groupClassId).get().getTrainers().contains(user));
     }
 
+    @Test
+    void shouldHave4WorkedHours() {
+        Set<GroupClass> groupClasses = new HashSet<>();
+        groupClasses.add(addGroupClass());
+        groupClasses.add(addGroupClass());
+        User user1 = new User(Long.MAX_VALUE,
+                "Troy",
+                "Bolton",
+                "troybolton",
+                "password123",
+                "troy.bolton@easthigh.com",
+                "10",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                groupClasses);
+        User savedUser = userService.create(user1);
+        LocalDateTime from = LocalDateTime.of(2023, 3, 20, 9, 30);
+        LocalDateTime to = LocalDateTime.of(2023, 3, 20, 11, 30);
+        assert (userService.countHoursByUserAndMonth(savedUser.getId(), from, to) == 4);
+    }
+
+    @Test
+    void shouldHave1WorkedHour() {
+        Set<GroupClass> groupClasses = new HashSet<>();
+        groupClasses.add(addGroupClass());
+        User user1 = new User(Long.MAX_VALUE,
+                "Troy",
+                "Bolton",
+                "troybolton",
+                "password123",
+                "troy.bolton@easthigh.com",
+                "10",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                groupClasses);
+        User user2 = new User(Long.MAX_VALUE,
+                "Troy",
+                "Bolton",
+                "troybolton1",
+                "password123",
+                "troy.bolton@easthigh.com",
+                "10",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                groupClasses);
+        User savedUser = userService.create(user1);
+        User savedUser2 = userService.create(user2);
+        LocalDateTime from = LocalDateTime.of(2023, 3, 20, 10, 30);
+        LocalDateTime to = LocalDateTime.of(2023, 4, 20, 11, 30);
+        assert (userService.countHoursByUserAndMonth(savedUser.getId(), from, to) == 1);
+    }
+
     Room addTestRoom() {
-        Room room1 = new Room(1L, 100, "one");
+        Room room1 = new Room(Long.MAX_VALUE, 100, "one");
         return roomService.create(room1);
     }
 
     SportType addTestSportType() {
-        SportType sportType1 = new SportType(1L, "joga");
+        SportType sportType1 = new SportType(Long.MAX_VALUE, "joga");
         return sportTypeService.create(sportType1);
     }
 
     User addTestUser() {
-        User user1 = new User(1L,
+        User user1 = new User(Long.MAX_VALUE,
                 "Troy",
                 "Bolton",
                 "troybolton",
@@ -214,9 +267,9 @@ public class ServiceTest {
     GroupClass addGroupClass() {
         addTestRoom();
         addTestSportType();
-        GroupClass groupClass1 = new GroupClass(1L,
+        GroupClass groupClass1 = new GroupClass(Long.MAX_VALUE,
                 LocalDateTime.of(2023, 3, 20, 9, 30),
-                LocalDateTime.of(2023, 3, 20, 10, 30),
+                LocalDateTime.of(2023, 3, 20, 11, 30),
                 100,
                 roomService.findAll().iterator().next(),
                 sportTypeService.findAll().iterator().next(),
