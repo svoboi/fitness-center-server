@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @DataJpaTest
 class JpaRepositoryTest {
@@ -64,18 +66,41 @@ class JpaRepositoryTest {
         assert (groupClassOp.get().getCapacity() == 100);
     }
 
+    @Test
+    void shouldHave2WorkedClasses() {
+        Set<GroupClass> groupClasses = new HashSet<>();
+        groupClasses.add(addGroupClass());
+        groupClasses.add(addGroupClass());
+        User user1 = new User(1L,
+                "Troy",
+                "Bolton",
+                "troybolton",
+                "password123",
+                "troy.bolton@easthigh.com",
+                "10",
+                Boolean.TRUE,
+                Boolean.FALSE,
+                groupClasses);
+        User savedUser = userRepository.save(user1);
+        LocalDateTime from = LocalDateTime.of(2023, 2, 20, 9, 30);
+        LocalDateTime to = LocalDateTime.of(2023, 4, 20, 11, 30);
+        Collection<GroupClass> workedGroupClasses =
+                groupClassRepository.findAllByTimeFromBetweenOrTimeToBetweenAndTrainersContaining(from, to, from, to, savedUser);
+        assert (workedGroupClasses.size() == 2);
+    }
+
     Room addTestRoom() {
-        Room room1 = new Room(1L, 100, "one");
+        Room room1 = new Room(Long.MAX_VALUE, 100, "one");
         return roomRepository.save(room1);
     }
 
     SportType addTestSportType() {
-        SportType sportType1 = new SportType(1L, "joga");
+        SportType sportType1 = new SportType(Long.MAX_VALUE, "joga");
         return sportTypeRepository.save(sportType1);
     }
 
     User addTestUser() {
-        User user1 = new User(1L,
+        User user1 = new User(Long.MAX_VALUE,
                 "Troy",
                 "Bolton",
                 "troybolton",
@@ -91,9 +116,9 @@ class JpaRepositoryTest {
     GroupClass addGroupClass() {
         addTestRoom();
         addTestSportType();
-        GroupClass groupClass1 = new GroupClass(1L,
+        GroupClass groupClass1 = new GroupClass(Long.MAX_VALUE,
                 LocalDateTime.of(2023, 3, 20, 9, 30),
-                LocalDateTime.of(2023, 3, 20, 10, 30),
+                LocalDateTime.of(2023, 3, 20, 11, 30),
                 100,
                 roomRepository.findAll().iterator().next(),
                 sportTypeRepository.findAll().iterator().next(),
