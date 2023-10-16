@@ -14,8 +14,9 @@ import java.util.Collection;
 public interface GroupClassRepository extends CrudRepository<GroupClass, Long> {
     Collection<GroupClass> findAllByRoom(Room room);
 
-    Collection<GroupClass> findAllByTimeFromBetweenOrTimeToBetweenAndTrainersContaining
+    Collection<GroupClass> findAllByTimeFromBetweenAndTrainersContainingOrTimeToBetweenAndTrainersContaining
             (LocalDateTime timeFromFrom, LocalDateTime timeFromTo,
+             User user1,
              LocalDateTime timeToFrom, LocalDateTime timeToTo,
-             User user);
+             User user2);
 }
