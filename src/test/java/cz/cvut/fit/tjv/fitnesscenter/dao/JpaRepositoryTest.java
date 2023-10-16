@@ -11,8 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
 @DataJpaTest
 class JpaRepositoryTest {
@@ -68,24 +68,28 @@ class JpaRepositoryTest {
 
     @Test
     void shouldHave2WorkedClasses() {
-        Set<GroupClass> groupClasses = new HashSet<>();
-        groupClasses.add(addGroupClass());
-        groupClasses.add(addGroupClass());
-        User user1 = new User(1L,
-                "Troy",
-                "Bolton",
-                "troybolton",
-                "password123",
-                "troy.bolton@easthigh.com",
-                "10",
-                Boolean.TRUE,
-                Boolean.FALSE,
-                groupClasses);
-        User savedUser = userRepository.save(user1);
-        LocalDateTime from = LocalDateTime.of(2023, 2, 20, 9, 30);
-        LocalDateTime to = LocalDateTime.of(2023, 4, 20, 11, 30);
-        Collection<GroupClass> workedGroupClasses =
-                groupClassRepository.findAllByTimeFromBetweenOrTimeToBetweenAndTrainersContaining(from, to, from, to, savedUser);
+        Room room = addTestRoom();
+        SportType sportType = addTestSportType();
+        User user = addTestUser();
+        GroupClass groupClass1 = new GroupClass(Long.MAX_VALUE,
+                LocalDateTime.of(2023, 3, 20, 9, 30),
+                LocalDateTime.of(2023, 3, 20, 11, 30),
+                100,
+                room,
+                sportType,
+                Collections.singleton(user));
+        GroupClass groupClass2 = new GroupClass(Long.MAX_VALUE,
+                LocalDateTime.of(2023, 3, 20, 9, 30),
+                LocalDateTime.of(2023, 3, 20, 11, 30),
+                100,
+                room,
+                sportType,
+                Collections.singleton(user));
+        groupClassRepository.save(groupClass1);
+        groupClassRepository.save(groupClass2);
+        LocalDateTime from = LocalDateTime.of(2022, 2, 20, 9, 30);
+        LocalDateTime to = LocalDateTime.of(2024, 4, 20, 11, 30);
+        Collection<GroupClass> workedGroupClasses = groupClassRepository.findAllByTimeFromBetweenAndTrainersContainingOrTimeToBetweenAndTrainersContaining(from, to, user, from, to, user);
         assert (workedGroupClasses.size() == 2);
     }
 
