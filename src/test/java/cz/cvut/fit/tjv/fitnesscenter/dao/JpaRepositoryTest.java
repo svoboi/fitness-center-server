@@ -85,11 +85,19 @@ class JpaRepositoryTest {
                 room,
                 sportType,
                 Collections.singleton(user));
+        GroupClass groupClass3 = new GroupClass(Long.MAX_VALUE,
+                LocalDateTime.of(2021, 3, 20, 9, 30),
+                LocalDateTime.of(2021, 3, 20, 16, 30),
+                100,
+                room,
+                sportType,
+                Collections.singleton(user));
         groupClassRepository.save(groupClass1);
         groupClassRepository.save(groupClass2);
+        groupClassRepository.save(groupClass3); //this groupClass shouldnt be counting into the sum
         LocalDateTime from = LocalDateTime.of(2022, 2, 20, 9, 30);
         LocalDateTime to = LocalDateTime.of(2024, 4, 20, 11, 30);
-        Collection<GroupClass> workedGroupClasses = groupClassRepository.findAllByTimeFromBetweenAndTrainersContainingOrTimeToBetweenAndTrainersContaining(from, to, user, from, to, user);
+        Collection<GroupClass> workedGroupClasses = groupClassRepository.findAllByTrainerAndTime(user, from, to);
         assert (workedGroupClasses.size() == 2);
     }
 
