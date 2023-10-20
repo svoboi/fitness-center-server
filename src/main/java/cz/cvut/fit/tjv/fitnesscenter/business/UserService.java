@@ -76,8 +76,7 @@ public class UserService implements ServiceInterface<User> {
     public Integer countHoursByUserAndMonth(Long userId, LocalDateTime givenTimeFrom, LocalDateTime givenTimeTo) {
         User user = repository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User"));
         Collection<GroupClass> groupClasses =
-                groupClassRepository.findAllByTimeFromBetweenAndTrainersContainingOrTimeToBetweenAndTrainersContaining
-                        (givenTimeFrom, givenTimeTo, user, givenTimeFrom, givenTimeTo, user);
+                groupClassRepository.findAllByTrainerAndTime(user, givenTimeFrom, givenTimeTo);
         int workedMinutes = 0;
         for (GroupClass groupClass : groupClasses) {
             if (groupClass.getTimeFrom().isBefore(givenTimeFrom)) {
