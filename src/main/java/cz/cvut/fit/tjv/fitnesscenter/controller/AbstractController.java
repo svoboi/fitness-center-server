@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static java.util.stream.Collectors.toList;
@@ -48,6 +46,6 @@ public abstract class AbstractController<EntityType> {
             throw new NoSuchElementException();
         }
         service.deleteById(id);
-        return new ResponseEntity<>(new HashMap<>(Map.of("message", "Entity deleted successfully")), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
