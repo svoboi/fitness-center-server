@@ -20,6 +20,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GroupClass'
+            examples:
+              ClassWithTrainers:
+                $ref: '#/components/examples/ClassWithTrainers'
+              ClassWithoutTrainers:
+                $ref: '#/components/examples/ClassWithoutTrainers'
       responses:
         '201':
           description: Created
@@ -154,6 +159,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+            examples:
+              JaraCimrmanUser:
+                $ref: '#/components/examples/UserWithClass'
+              KarelGottUser:
+                $ref: '#/components/examples/UserWithoutClass'
       responses:
         '201':
           description: Created
@@ -221,6 +231,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+            examples:
+              JaraCimrmanUser:
+                $ref: '#/components/examples/UserWithClass'
+              KarelGottUser:
+                $ref: '#/components/examples/UserWithoutClass'
       responses:
         '200':
           description: OK
@@ -482,11 +497,11 @@ components:
         timeFrom:
           type: string
           format: date-time
-          example: "2017-07-21T09:30:00Z"
+          example: "2017-07-21T09:30:00"
         timeTo:
           type: string
           format: date-time
-          example: "2017-07-21T10:30:00Z"
+          example: "2017-07-21T10:30:00"
         capacity:
           type: number
           format: int64
@@ -504,10 +519,10 @@ components:
                 type: integer
           example: [ { "id": 1 }, { "id": 2 } ]
       required:
-        - day
-        - timeFro
+        - timeFrom
         - timeTo
         - capacity
+        - room
         - sportType
     User:
       type: object
@@ -553,6 +568,8 @@ components:
       required:
         - firstName
         - lastName
+        - username
+        - password
         - emailAddress
         - employee
         - customer
@@ -580,6 +597,49 @@ components:
         typeName:
           type: string
           example: "joga"
+
+  examples:
+    UserWithClass:
+      value:
+        id: 1
+        firstName: "Jara"
+        lastName: "Cimrman"
+        username: "jara"
+        password: "cimrman123"
+        emailAddress: "jarek@cimrman.cz"
+        phoneNumber: 987654321
+        employee: true
+        customer: true
+        leadClasses: [ { "id": 1 } ]
+    UserWithoutClass:
+      value:
+        id: 2
+        firstName: "Karel"
+        lastName: "Gott"
+        username: "karel"
+        password: "gott123"
+        emailAddress: "kaja@gottu.cz"
+        phoneNumber: 987654321
+        employee: false
+        customer: false
+    ClassWithTrainers:
+      value:
+        id: 1
+        timeFrom: "2023-02-21T15:00:00"
+        timeTo: "2023-02-21T16:30:00"
+        capacity: 100
+        room: { "id": 1 }
+        sportType: { "id": 1 }
+        trainers: [ { "id": 1 }, { "id": 2 } ]
+    ClassWithoutTrainers:
+      value:
+        id: 2
+        timeFrom: "2023-02-21T15:00:00"
+        timeTo: "2023-02-21T16:30:00"
+        capacity: 100
+        room: { "id": 1 }
+        sportType: { "id": 1 }
+
 
 tags:
   - name: GroupClass
