@@ -14,8 +14,11 @@ import java.util.NoSuchElementException;
 
 import static java.util.stream.Collectors.toList;
 
+//https://www.baeldung.com/spring-cors
+
 @AllArgsConstructor
 @NoArgsConstructor
+@CrossOrigin
 public abstract class AbstractController<EntityType> {
     public ServiceInterface<EntityType> service;
     public Mapper<EntityType> mapper;
