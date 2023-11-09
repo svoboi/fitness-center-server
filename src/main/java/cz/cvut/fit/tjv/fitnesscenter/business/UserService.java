@@ -73,7 +73,7 @@ public class UserService implements ServiceInterface<User> {
         repository.deleteById(id);
     }
 
-    public Integer countHoursByUserAndMonth(Long userId, LocalDateTime givenTimeFrom, LocalDateTime givenTimeTo) {
+    public Integer countHoursByUserAndTimeFrame(Long userId, LocalDateTime givenTimeFrom, LocalDateTime givenTimeTo) {
         User user = repository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User"));
         Collection<GroupClass> groupClasses =
                 groupClassRepository.findAllByTrainerAndTime(user, givenTimeFrom, givenTimeTo);
