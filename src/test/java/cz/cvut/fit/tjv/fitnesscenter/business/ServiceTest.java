@@ -206,7 +206,7 @@ public class ServiceTest {
         User savedUser = userService.create(user1);
         LocalDateTime from = LocalDateTime.of(2023, 3, 20, 9, 30);
         LocalDateTime to = LocalDateTime.of(2023, 3, 20, 11, 30);
-        assert (userService.countHoursByUserAndMonth(savedUser.getId(), from, to) == 4);
+        assert (userService.countHoursByUserAndTimeFrame(savedUser.getId(), from, to) == 4);
     }
 
     @Test
@@ -237,7 +237,7 @@ public class ServiceTest {
         User savedUser2 = userService.create(user2);
         LocalDateTime from = LocalDateTime.of(2023, 3, 20, 10, 30);
         LocalDateTime to = LocalDateTime.of(2023, 4, 20, 11, 30);
-        assert (userService.countHoursByUserAndMonth(savedUser.getId(), from, to) == 1);
+        assert (userService.countHoursByUserAndTimeFrame(savedUser.getId(), from, to) == 1);
     }
 
     Room addTestRoom() {
