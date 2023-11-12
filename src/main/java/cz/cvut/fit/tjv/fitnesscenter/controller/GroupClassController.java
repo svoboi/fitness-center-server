@@ -27,7 +27,7 @@ public class GroupClassController extends AbstractController<GroupClass> {
                 .stream().map(mapper::toDto).collect(toList()), HttpStatus.OK);
     }
 
-    @PutMapping("/{classId}/trainer")
+    @PutMapping("/{classId}/trainers")
     public ResponseEntity<Object> addTrainer(@PathVariable Long classId, @RequestBody @Validated UserIdObject trainerIdObject) {
         return new ResponseEntity<>(
                 mapper.toDto(
@@ -36,7 +36,7 @@ public class GroupClassController extends AbstractController<GroupClass> {
                 HttpStatus.OK);
     }
 
-    @DeleteMapping("/{classId}/trainer")
+    @DeleteMapping("/{classId}/trainers")
     public ResponseEntity<Object> removeTrainer(@PathVariable Long classId, @RequestBody @Validated UserIdObject trainerIdObject) {
         ((GroupClassService) service).removeTrainer(classId, trainerIdObject.getUserId());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
