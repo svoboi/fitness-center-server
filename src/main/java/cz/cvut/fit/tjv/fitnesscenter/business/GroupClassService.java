@@ -57,6 +57,11 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         return repository.save(groupClass);
     }
+    
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
 
     public Boolean trainersSetOnlyEmployees(GroupClass groupClass) {
         for (var user : groupClass.getTrainers()) {
@@ -66,10 +71,6 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
             }
         }
         return Boolean.TRUE;
-    }
-
-    public void deleteById(Long id) {
-        repository.deleteById(id);
     }
 
     public Collection<GroupClass> findAllByRoom(Long id) {
