@@ -120,8 +120,7 @@ class JpaRepositoryTest {
                 "troy.bolton@easthigh.com",
                 "10",
                 Boolean.FALSE,
-                Boolean.TRUE,
-                new HashSet<>());
+                Boolean.TRUE);
         return userRepository.save(user1);
     }
 
