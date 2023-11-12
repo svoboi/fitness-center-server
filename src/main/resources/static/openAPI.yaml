@@ -161,9 +161,9 @@ paths:
               $ref: '#/components/schemas/User'
             examples:
               JaraCimrmanUser:
-                $ref: '#/components/examples/UserWithClass'
+                $ref: '#/components/examples/UserJara'
               KarelGottUser:
-                $ref: '#/components/examples/UserWithoutClass'
+                $ref: '#/components/examples/UserKarel'
       responses:
         '201':
           description: Created
@@ -233,9 +233,9 @@ paths:
               $ref: '#/components/schemas/User'
             examples:
               JaraCimrmanUser:
-                $ref: '#/components/examples/UserWithClass'
+                $ref: '#/components/examples/UserJara'
               KarelGottUser:
-                $ref: '#/components/examples/UserWithoutClass'
+                $ref: '#/components/examples/UserKarel'
       responses:
         '200':
           description: OK
@@ -592,14 +592,6 @@ components:
         customer:
           type: boolean
           example: true
-        leadClasses:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-          example: [ { "id": 1 }, { "id": 2 } ]
       required:
         - firstName
         - lastName
@@ -634,7 +626,7 @@ components:
           example: "joga"
 
   examples:
-    UserWithClass:
+    UserJara:
       value:
         id: 1
         firstName: "Jara"
@@ -645,8 +637,7 @@ components:
         phoneNumber: 987654321
         employee: true
         customer: true
-        leadClasses: [ { "id": 1 } ]
-    UserWithoutClass:
+    UserKarel:
       value:
         id: 2
         firstName: "Karel"

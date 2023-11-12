@@ -26,15 +26,10 @@ public class UserService implements ServiceInterface<User> {
     public User create(User user) throws EntityStateException {
         if (user.getId() != null && exists(user))
             throw new ConflictingEntityExistsException();
-        if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
-            throw new UserNotTrainerException();
-        }
         if (repository.findByUsername(user.getUsername()).isPresent()) {
             throw new UsernameTakenException();
         }
-        validateLeadClasses(user);
         User correctIdUser = repository.save(user);
-        addUserToLeadClasses(correctIdUser);
         return repository.save(correctIdUser);
     }
 
@@ -55,17 +50,11 @@ public class UserService implements ServiceInterface<User> {
         if (!exists(user)) {
             throw new EntityNotFoundException("User");
         }
-        if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
-            throw new UserNotTrainerException();
-        }
         if (repository.findByUsername(user.getUsername()).isPresent()
                 && !repository.findByUsername(user.getUsername()).get().getId().equals(pathId)) {
             throw new UsernameTakenException();
         }
-        validateLeadClasses(user);
-        removeOriginalLeadClasses(repository.findById(pathId).get());
         User correctIdUser = repository.save(user);
-        addUserToLeadClasses(correctIdUser);
         return repository.save(correctIdUser);
     }
 
@@ -95,28 +84,4 @@ public class UserService implements ServiceInterface<User> {
         Long id = user.getId();
         return id != null && repository.existsById(id);
     }
-
-    public void validateLeadClasses(User user) {
-        for (var groupClass : user.getLeadClasses()) {
-            Long groupClassId = groupClass.getId();
-            groupClassRepository.findById(groupClassId).orElseThrow(() -> new EntityNotFoundException("Class"));
-        }
-    }
-
-    public void addUserToLeadClasses(User user) {
-        for (var groupClass : user.getLeadClasses()) {
-            var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
-            groupClassFromRep.addTrainer(user);
-            groupClassRepository.save(groupClassFromRep);
-        }
-    }
-
-    public void removeOriginalLeadClasses(User user) {
-        for (var groupClass : user.getLeadClasses()) {
-            var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
-            groupClassFromRep.removeTrainer(user);
-            groupClassRepository.save(groupClassFromRep);
-        }
-    }
-
 }

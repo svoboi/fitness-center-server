@@ -36,14 +36,6 @@ public class GroupClass {
     @ManyToOne
     private SportType sportType;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     private Set<User> trainers = new HashSet<>();
-
-    public void addTrainer(User user) {
-        trainers.add(user);
-    }
-
-    public void removeTrainer(User user) {
-        trainers.remove(user);
-    }
 }

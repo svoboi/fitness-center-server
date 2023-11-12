@@ -1,7 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.controller;
 
 import cz.cvut.fit.tjv.fitnesscenter.business.UserService;
-import cz.cvut.fit.tjv.fitnesscenter.controller.dto.UserMapper;
+import cz.cvut.fit.tjv.fitnesscenter.controller.dto.Mapper;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController<User> {
-    UserController(UserService userService, UserMapper userMapper) {
+    UserController(UserService userService, Mapper<User> userMapper) {
         super(userService, userMapper);
     }
 
