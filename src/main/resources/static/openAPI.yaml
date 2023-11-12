@@ -149,6 +149,70 @@ paths:
       tags:
         - GroupClass
 
+  /groupClasses/{classId}/trainers:
+    put:
+      description: Add new trainer to group class
+      operationId: "add_trainer"
+      parameters:
+        - in: path
+          name: classId
+          required: true
+          description: ID of the class to add trainer to
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                userId:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupClass'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
+    delete:
+      description: Remove trainer from group class
+      operationId: "remove_trainer"
+      parameters:
+        - in: path
+          name: classId
+          required: true
+          description: ID of the class to remove trainer from
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                userId:
+                  type: integer
+                  example: 1
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
+
   /users:
     post:
       description: Upload json file as new user
