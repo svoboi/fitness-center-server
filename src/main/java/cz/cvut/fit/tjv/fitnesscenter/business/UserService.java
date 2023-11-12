@@ -59,6 +59,10 @@ public class UserService implements ServiceInterface<User> {
     }
 
     public void deleteById(Long id) {
+        User user = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("User"));
+        for (GroupClass groupClass : groupClassRepository.findAllByTrainersContaining(user)) {
+            groupClass.removeTrainer(user);
+        }
         repository.deleteById(id);
     }
 
