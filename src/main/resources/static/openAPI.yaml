@@ -367,6 +367,26 @@ paths:
       tags:
         - User
 
+  /users/available/{username}:
+    get:
+      description: Check if username is available
+      operationId: "username_availability"
+      parameters:
+        - in: path
+          name: username
+          required: true
+          description: Username to check
+          schema:
+            type: string
+            example: jara
+      responses:
+        '204':
+          description: No Content
+        '409':
+          description: Conflict
+      tags:
+        - User
+
   /rooms:
     post:
       description: Upload json file as new room
