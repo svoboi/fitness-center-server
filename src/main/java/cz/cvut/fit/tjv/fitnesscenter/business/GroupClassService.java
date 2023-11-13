@@ -4,13 +4,13 @@ import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
+import cz.cvut.fit.tjv.fitnesscenter.model.Room;
+import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 @Service
@@ -24,12 +24,16 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))
             throw new ConflictingEntityExistsException();
-        //todo: check room availability
-        if (!enoughCapacity(groupClass))
-            throw new NotEnoughCapacityException();
-        if (!trainersSetOnlyEmployees(groupClass)) {
-            throw new UserNotTrainerException();
-        }
+        checkEnoughCapacity(
+                groupClass.getCapacity(),
+                groupClass.getRoom().getId(),
+                groupClass.getTimeFrom(),
+                groupClass.getTimeTo()
+        );
+        checkTrainersSetOnlyEmployees(groupClass);
+        groupClass.getTrainers().forEach(
+                trainer -> checkTrainersAvailability(trainer, groupClass.getTimeFrom(), groupClass.getTimeTo())
+        );
         return repository.save(groupClass);
     }
 
@@ -49,12 +53,16 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         if (!exists(groupClass))
             throw new EntityNotFoundException("Class");
-        //todo: check room availability
-        if (!enoughCapacity(groupClass))
-            throw new NotEnoughCapacityException();
-        if (!trainersSetOnlyEmployees(groupClass)) {
-            throw new UserNotTrainerException();
-        }
+        checkEnoughCapacity(
+                groupClass.getCapacity(),
+                groupClass.getRoom().getId(),
+                groupClass.getTimeFrom(),
+                groupClass.getTimeTo()
+        );
+        checkTrainersSetOnlyEmployees(groupClass);
+        groupClass.getTrainers().forEach(
+                trainer -> checkTrainersAvailability(trainer, groupClass.getTimeFrom(), groupClass.getTimeTo())
+        );
         return repository.save(groupClass);
     }
 
@@ -69,7 +77,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         if (!user.getEmployee()) {
             throw new UserNotTrainerException();
         }
-
+        checkTrainersAvailability(user, groupClass.getTimeFrom(), groupClass.getTimeTo());
         groupClass.addTrainer(user);
         return repository.save(groupClass);
     }
@@ -82,14 +90,13 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         repository.save(groupClass);
     }
 
-    public Boolean trainersSetOnlyEmployees(GroupClass groupClass) {
+    public void checkTrainersSetOnlyEmployees(GroupClass groupClass) {
         for (var user : groupClass.getTrainers()) {
-            var userOp = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User"));
-            if (!userOp.getEmployee()) {
-                return Boolean.FALSE;
+            var foundUser = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User"));
+            if (!foundUser.getEmployee()) {
+                throw new UserNotTrainerException();
             }
         }
-        return Boolean.TRUE;
     }
 
     public Collection<GroupClass> findAllByRoom(Long id) {
@@ -102,9 +109,39 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return id != null && repository.existsById(id);
     }
 
-    public Boolean enoughCapacity(GroupClass groupClass) {
-        var room = roomService.findById(groupClass.getRoom().getId())
+    public void checkEnoughCapacity(Integer groupClassCapacity, Long roomId, LocalDateTime timeFrom, LocalDateTime timeTo) {
+        Room room = roomService.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room"));
-        return groupClass.getCapacity() <= room.getCapacity();
+        if (groupClassCapacity > countRemainingCapacity(room, timeFrom, timeTo)) {
+            throw new NotEnoughCapacityException();
+        }
+    }
+
+    public Integer countRemainingCapacity(Room room, LocalDateTime timeFrom, LocalDateTime timeTo) {
+        Collection<GroupClass> overlappingGroupClasses =
+                repository.findAllByRoomAndTime(
+                        room,
+                        timeFrom,
+                        timeTo
+                );
+        var biggestOverlappingGroupClassOp =
+                overlappingGroupClasses.stream().max(
+                        Comparator.comparing(GroupClass::getCapacity)
+                );
+        return (biggestOverlappingGroupClassOp.isEmpty() ?
+                room.getCapacity() :
+                room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
+    }
+
+    public void checkTrainersAvailability(User user, LocalDateTime timeFrom, LocalDateTime timeTo) {
+        Collection<GroupClass> overlappingGroupClasses =
+                repository.findAllByTrainerAndTime(
+                        user,
+                        timeFrom,
+                        timeTo
+                );
+        if (!overlappingGroupClasses.isEmpty()) {
+            throw new TrainerNotAvailableException(user.getUsername());
+        }
     }
 }
