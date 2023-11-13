@@ -86,7 +86,6 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", e.getFieldError().getDefaultMessage());
-//        body.put("message", "Invalid entity: " + e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -107,7 +106,18 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "This room doesn't have enough space.");
+        body.put("message", "This room doesn't have enough space at given time.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TrainerNotAvailableException.class)
+    public ResponseEntity<Object> handleTrainerNotAvailableException(
+            TrainerNotAvailableException e, WebRequest request) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", "Trainer " + e.getMessage() + " not available at given time.");
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
