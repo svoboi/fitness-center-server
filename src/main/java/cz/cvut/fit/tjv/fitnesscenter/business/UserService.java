@@ -84,6 +84,10 @@ public class UserService implements ServiceInterface<User> {
         return workedMinutes / 60;
     }
 
+    public Boolean isUsernameAvailable(String username) {
+        return repository.findByUsername(username).isEmpty();
+    }
+
     public Boolean exists(User user) {
         Long id = user.getId();
         return id != null && repository.existsById(id);

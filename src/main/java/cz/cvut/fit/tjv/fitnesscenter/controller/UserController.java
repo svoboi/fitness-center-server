@@ -26,4 +26,14 @@ public class UserController extends AbstractController<User> {
         body.put("hours", ((UserService) service).countHoursByUserAndTimeFrame(id, timeFrom, timeTo));
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
+
+    @GetMapping("/available/{username}")
+    public ResponseEntity<Object> availabilityOfUsername(@PathVariable String username) {
+        if (((UserService) service).isUsernameAvailable(username)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "This username is taken.");
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
 }
