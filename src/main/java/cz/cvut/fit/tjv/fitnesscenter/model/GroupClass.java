@@ -36,7 +36,7 @@ public class GroupClass {
     @ManyToOne
     private SportType sportType;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> trainers = new HashSet<>();
 
     public void addTrainer(User user) {
