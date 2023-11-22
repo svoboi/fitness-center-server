@@ -9,22 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 
 @RestController
 @RequestMapping("/groupClasses")
 public class GroupClassController extends AbstractController<GroupClass> {
     GroupClassController(GroupClassService groupClassService, GroupClassMapper groupClassMapper) {
         super(groupClassService, groupClassMapper);
-    }
-
-    @GetMapping("/room/{id}")
-    public ResponseEntity<List<Object>> allClassesByRoom(@PathVariable Long id) {
-        return new ResponseEntity<>(((GroupClassService) service).findAllByRoom(id)
-                .stream().map(mapper::toDto).collect(toList()), HttpStatus.OK);
     }
 
     @PutMapping("/{classId}/trainers")

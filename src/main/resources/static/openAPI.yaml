@@ -127,32 +127,6 @@ paths:
       tags:
         - GroupClass
 
-  /groupClasses/room/{id}:
-    get:
-      description: Filter group classes by room id
-      operationId: "filter_group_classes"
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: ID of the room for which classes are retrieved
-          schema:
-            type: integer
-            example: 1
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GroupClass'
-        '404':
-          description: Not Found
-      tags:
-        - GroupClass
-
   /groupClasses/{classId}/trainers:
     put:
       description: Add new trainer to group class

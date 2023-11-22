@@ -241,11 +241,4 @@ public class GroupClassServiceIntegrationTest {
         var groupClassAfterRemoving = groupClassService.findAll().iterator().next();
         assert (groupClassAfterRemoving.getTrainers().size() == 0);
     }
-
-    @Test
-    void findsAllByRoom() {
-        Room room = roomService.findAll().iterator().next();
-        assert (groupClassService.findAllByRoom(room.getId()).size() == 1);
-    }
-
 }

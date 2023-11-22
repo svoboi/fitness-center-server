@@ -102,11 +102,6 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
     }
 
-    public Collection<GroupClass> findAllByRoom(Long id) {
-        var room = roomService.findById(id).orElseThrow(() -> new EntityNotFoundException("Room"));
-        return repository.findAllByRoom(room);
-    }
-
     public Boolean exists(GroupClass groupClass) {
         Long id = groupClass.getId();
         return id != null && repository.existsById(id);
