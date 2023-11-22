@@ -12,8 +12,8 @@ servers:
 paths:
   /groupClasses:
     post:
-      description: Upload json file as new class
-      operationId: "upload_group_class"
+      description: Register new class
+      operationId: "register_group_class"
       requestBody:
         required: true
         content:
@@ -33,9 +33,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/GroupClass'
         '400':
-          description: Bad Request
+          description: Bad Format or user isn't trainer
         '409':
-          description: Conflict
+          description: Class ID is taken, user is busy or room doesn't have enough capacity
       tags:
         - GroupClass
     get:
@@ -100,8 +100,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GroupClass'
+        '400':
+          description: Bad Format or user isn't trainer
         '404':
           description: Not Found
+        '409':
+          description: Class ID is taken, user is busy, room doesn't have enough capacity or conflicting ID in path and body
       tags:
         - GroupClass
     delete:
@@ -178,9 +182,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/GroupClass'
         '400':
-          description: Bad Request
+          description: Bad Format or user isn't trainer
         '404':
           description: Not Found
+        '409':
+          description: Class ID is taken, user is busy, room doesn't have enough capacity
       tags:
         - GroupClass
     delete:
@@ -215,8 +221,8 @@ paths:
 
   /users:
     post:
-      description: Upload json file as new user
-      operationId: "upload_user"
+      description: Register new user
+      operationId: "register_user"
       requestBody:
         required: true
         content:
@@ -236,9 +242,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: Bad Request
+          description: Bad Format
         '409':
-          description: Conflict
+          description: Username taken or user with this ID exists
       tags:
         - User
     get:
@@ -307,10 +313,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '400':
+          description: Bad format
         '404':
           description: Not Found
         '409':
-          description: Conflict
+          description: Username taken, user with this ID exists or conflicting ID in path and body
       tags:
         - User
     delete:
@@ -381,16 +389,16 @@ paths:
             example: jara
       responses:
         '204':
-          description: No Content
+          description: Available username
         '409':
-          description: Conflict
+          description: Taken username
       tags:
         - User
 
   /rooms:
     post:
-      description: Upload json file as new room
-      operationId: "upload_room"
+      description: Register new room
+      operationId: "register_room"
       requestBody:
         required: true
         content:
@@ -405,9 +413,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Room'
         '400':
-          description: Bad Request
+          description: Bad Format
         '409':
-          description: Conflict
+          description: Room with this ID exists
       tags:
         - Room
     get:
@@ -474,6 +482,8 @@ paths:
                 $ref: '#/components/schemas/Room'
         '404':
           description: Not Found
+        '409':
+          description: Conflicting ID in path and body
       tags:
         - Room
     delete:
@@ -497,8 +507,8 @@ paths:
 
   /sportTypes:
     post:
-      description: Upload json file as new sport type
-      operationId: "upload_sport_type"
+      description: Register new sport type
+      operationId: "register_sport_type"
       requestBody:
         required: true
         content:
@@ -515,7 +525,7 @@ paths:
         '400':
           description: Bad Request
         '409':
-          description: Conflict
+          description: SportType with this ID already exists
       tags:
         - SportType
     get:
@@ -582,6 +592,8 @@ paths:
                 $ref: '#/components/schemas/SportType'
         '404':
           description: Not Found
+        '409':
+          description: Conflicting ID in path and body
       tags:
         - SportType
     delete:
