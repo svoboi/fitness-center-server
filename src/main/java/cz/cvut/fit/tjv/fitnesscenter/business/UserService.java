@@ -29,8 +29,7 @@ public class UserService implements ServiceInterface<User> {
         if (repository.findByUsername(user.getUsername()).isPresent()) {
             throw new UsernameTakenException();
         }
-        User correctIdUser = repository.save(user);
-        return repository.save(correctIdUser);
+        return repository.save(user);
     }
 
     public Optional<User> findById(Long id) {
@@ -54,8 +53,7 @@ public class UserService implements ServiceInterface<User> {
                 && !repository.findByUsername(user.getUsername()).get().getId().equals(pathId)) {
             throw new UsernameTakenException();
         }
-        User correctIdUser = repository.save(user);
-        return repository.save(correctIdUser);
+        return repository.save(user);
     }
 
     public void deleteById(Long id) {
