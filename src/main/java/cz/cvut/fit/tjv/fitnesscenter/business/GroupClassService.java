@@ -32,7 +32,10 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         );
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
-                trainer -> checkTrainersAvailability(trainer, groupClass.getTimeFrom(), groupClass.getTimeTo())
+                trainer -> {
+                    User realUser = userRepository.findById(trainer.getId()).get();
+                    checkTrainersAvailability(realUser, groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getId());
+                }
         );
         return repository.save(groupClass);
     }
@@ -61,7 +64,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         );
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
-                trainer -> checkTrainersAvailability(trainer, groupClass.getTimeFrom(), groupClass.getTimeTo())
+                trainer -> checkTrainersAvailability(trainer, groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getId())
         );
         return repository.save(groupClass);
     }
@@ -77,7 +80,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         if (!user.getEmployee()) {
             throw new UserNotTrainerException();
         }
-        checkTrainersAvailability(user, groupClass.getTimeFrom(), groupClass.getTimeTo());
+        checkTrainersAvailability(user, groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getId());
         groupClass.addTrainer(user);
         return repository.save(groupClass);
     }
@@ -133,7 +136,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                 room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
     }
 
-    public void checkTrainersAvailability(User user, LocalDateTime timeFrom, LocalDateTime timeTo) {
+    public void checkTrainersAvailability(User user, LocalDateTime timeFrom, LocalDateTime timeTo, Long groupClassId) {
         Collection<GroupClass> overlappingGroupClasses =
                 repository.findAllByTrainerAndTime(
                         user,
@@ -141,6 +144,12 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                         timeTo
                 );
         if (!overlappingGroupClasses.isEmpty()) {
+            // checks if the conflicting class is the same one were trying to change
+            if (overlappingGroupClasses.size() == 1
+                    && !(groupClassId == null)
+                    && overlappingGroupClasses.iterator().next().getId().equals(groupClassId)) {
+                return;
+            }
             throw new TrainerNotAvailableException(user.getUsername());
         }
     }
