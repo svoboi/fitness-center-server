@@ -242,7 +242,7 @@ public class GroupClassServiceUnitTest {
                 sportType,
                 Collections.singleton(user));
         Mockito.when(groupClassRepository.findById(1L)).thenReturn(Optional.of(groupClass));
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(roomService.findById(room.getId())).thenReturn(Optional.of(room));
 
         Assertions.assertThrows(
