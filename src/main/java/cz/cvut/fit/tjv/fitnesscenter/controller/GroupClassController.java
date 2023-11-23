@@ -2,7 +2,7 @@ package cz.cvut.fit.tjv.fitnesscenter.controller;
 
 import cz.cvut.fit.tjv.fitnesscenter.business.GroupClassService;
 import cz.cvut.fit.tjv.fitnesscenter.controller.dto.GroupClassMapper;
-import cz.cvut.fit.tjv.fitnesscenter.controller.dto.UserIdObject;
+import cz.cvut.fit.tjv.fitnesscenter.controller.dto.UsernameObject;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ public class GroupClassController extends AbstractController<GroupClass> {
     }
 
     @PutMapping("/{classId}/trainers")
-    public ResponseEntity<Object> addTrainer(@PathVariable Long classId, @RequestBody @Validated UserIdObject trainerIdObject) {
+    public ResponseEntity<Object> addTrainer(@PathVariable Long classId, @RequestBody @Validated UsernameObject trainerUsernameObject) {
         return new ResponseEntity<>(
                 mapper.toDto(
-                        ((GroupClassService) service).addTrainer(classId, trainerIdObject.getUserId())
+                        ((GroupClassService) service).addTrainer(classId, trainerUsernameObject.getUsername())
                 ),
                 HttpStatus.OK);
     }
 
     @DeleteMapping("/{classId}/trainers")
-    public ResponseEntity<Object> removeTrainer(@PathVariable Long classId, @RequestBody @Validated UserIdObject trainerIdObject) {
-        ((GroupClassService) service).removeTrainer(classId, trainerIdObject.getUserId());
+    public ResponseEntity<Object> removeTrainer(@PathVariable Long classId, @RequestBody @Validated UsernameObject trainerUsernameObject) {
+        ((GroupClassService) service).removeTrainer(classId, trainerUsernameObject.getUsername());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -74,9 +74,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     }
 
 
-    public GroupClass addTrainer(Long classId, Long trainerId) {
+    public GroupClass addTrainer(Long classId, String trainerUsername) {
         var groupClass = repository.findById(classId).orElseThrow(() -> new EntityNotFoundException("Class"));
-        var user = userRepository.findById(trainerId).orElseThrow(() -> new EntityNotFoundException("User"));
+        var user = userRepository.findByUsername(trainerUsername).orElseThrow(() -> new EntityNotFoundException("User"));
         if (!user.getEmployee()) {
             throw new UserNotTrainerException();
         }
@@ -85,9 +85,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return repository.save(groupClass);
     }
 
-    public void removeTrainer(Long classId, Long trainerId) {
+    public void removeTrainer(Long classId, String trainerUsername) {
         var groupClass = repository.findById(classId).orElseThrow(() -> new EntityNotFoundException("Class"));
-        var user = userRepository.findById(trainerId).orElseThrow(() -> new EntityNotFoundException("User"));
+        var user = userRepository.findByUsername(trainerUsername).orElseThrow(() -> new EntityNotFoundException("User"));
 
         groupClass.removeTrainer(user);
         repository.save(groupClass);

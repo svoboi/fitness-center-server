@@ -247,7 +247,7 @@ public class GroupClassServiceUnitTest {
 
         Assertions.assertThrows(
                 UserNotTrainerException.class,
-                () -> groupClassService.addTrainer(groupClass.getId(), user.getId())
+                () -> groupClassService.addTrainer(groupClass.getId(), user.getUsername())
         );
     }
 }

@@ -209,7 +209,7 @@ public class GroupClassServiceIntegrationTest {
         User user = userService.findAll().iterator().next();
         GroupClass groupClass = groupClassService.findAll().iterator().next();
         assert (groupClassService.findAll().iterator().next().getTrainers().size() == 0);
-        groupClassService.addTrainer(groupClass.getId(), user.getId());
+        groupClassService.addTrainer(groupClass.getId(), user.getUsername());
         assert (groupClassService.findAll().iterator().next().getTrainers().size() == 1);
     }
 
@@ -228,7 +228,7 @@ public class GroupClassServiceIntegrationTest {
         User createdUser = userService.create(user);
         Assertions.assertThrows(
                 UserNotTrainerException.class,
-                () -> groupClassService.addTrainer(groupClass.getId(), createdUser.getId())
+                () -> groupClassService.addTrainer(groupClass.getId(), createdUser.getUsername())
         );
     }
 
@@ -236,7 +236,7 @@ public class GroupClassServiceIntegrationTest {
     void removeTrainerSuccess() {
         User user = userService.findAll().iterator().next();
         GroupClass groupClass = groupClassService.findAll().iterator().next();
-        groupClassService.removeTrainer(groupClass.getId(), user.getId());
+        groupClassService.removeTrainer(groupClass.getId(), user.getUsername());
 
         var groupClassAfterRemoving = groupClassService.findAll().iterator().next();
         assert (groupClassAfterRemoving.getTrainers().size() == 0);
