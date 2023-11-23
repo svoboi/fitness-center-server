@@ -97,6 +97,16 @@ public class GroupClassServiceIntegrationTest {
     }
 
     @Test
+    void shouldThrowConflict() {
+        var groupClasses = groupClassService.findAll();
+        GroupClass foundGroupClass = groupClasses.iterator().next();
+        Assertions.assertThrows(
+                ConflictingEntityExistsException.class,
+                () -> groupClassService.create(foundGroupClass)
+        );
+    }
+
+    @Test
     void notEnoughCapacityCreate() {
         var groupClasses = groupClassService.findAll();
         GroupClass foundGroupClass = groupClasses.iterator().next();
@@ -131,16 +141,6 @@ public class GroupClassServiceIntegrationTest {
         Long wrongID = groupClass.getId().equals(1L) ? 2L : 1L;
         var foundGroupClass = groupClassService.findById(wrongID);
         assert (foundGroupClass.isEmpty());
-    }
-
-    @Test
-    void shouldThrowConflict() {
-        var groupClasses = groupClassService.findAll();
-        GroupClass foundGroupClass = groupClasses.iterator().next();
-        Assertions.assertThrows(
-                ConflictingEntityExistsException.class,
-                () -> groupClassService.create(foundGroupClass)
-        );
     }
 
     @Test
