@@ -76,7 +76,23 @@ public class GroupClassRepositoryTest {
         Room room = new Room(Long.MAX_VALUE, 100, "two");
         roomRepository.save(room);
         Collection<GroupClass> groupClasses = groupClassRepository.findAllByRoom(room);
-        assert (groupClasses.size() == 0);
+        assert (groupClasses.isEmpty());
+    }
+
+    @Test
+    void shouldBe1ClassesWithSportType() {
+        SportType sportType = sportTypeRepository.findAll().iterator().next();
+        Collection<GroupClass> groupClasses = groupClassRepository.findAllBySportType(sportType);
+        assert (groupClasses.size() == 1);
+        assert (groupClasses.iterator().next().getSportType() == sportType);
+    }
+
+    @Test
+    void shouldBe0ClassesWithSportType() {
+        SportType sportType = new SportType(Long.MAX_VALUE, "joga");
+        sportTypeRepository.save(sportType);
+        Collection<GroupClass> groupClasses = groupClassRepository.findAllBySportType(sportType);
+        assert (groupClasses.isEmpty());
     }
 
     @Test
