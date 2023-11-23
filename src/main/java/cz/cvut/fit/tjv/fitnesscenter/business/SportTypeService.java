@@ -1,5 +1,6 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
+import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.SportTypeRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SportTypeService implements ServiceInterface<SportType> {
     private SportTypeRepository repository;
+    private GroupClassRepository groupClassRepository;
 
     public SportType create(SportType sportType) throws EntityStateException {
         if (exists(sportType))
@@ -46,7 +48,19 @@ public class SportTypeService implements ServiceInterface<SportType> {
     }
 
     public void deleteById(Long id) {
+        deleteSportTypeFromGroupClasses(id);
         repository.deleteById(id);
+    }
+
+    public void deleteSportTypeFromGroupClasses(Long id) {
+        var sportTypeOp = repository.findById(id);
+        if (sportTypeOp.isEmpty()) {
+            return;
+        }
+        var groupClasses = groupClassRepository.findAllBySportType(sportTypeOp.get());
+        for (var groupClass : groupClasses) {
+            groupClass.setSportType(null);
+        }
     }
 
     public Boolean exists(SportType sportType) {

@@ -28,11 +28,9 @@ public class GroupClass {
     @NotNull(message = "capacity is required.")
     private Integer capacity;
 
-    @NotNull(message = "room is required.")
     @ManyToOne
     private Room room;
 
-    @NotNull(message = "sportType is required.")
     @ManyToOne
     private SportType sportType;
 

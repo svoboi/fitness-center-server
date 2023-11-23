@@ -3,6 +3,7 @@ package cz.cvut.fit.tjv.fitnesscenter.dao;
 
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
+import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,6 +15,8 @@ import java.util.Collection;
 @Repository
 public interface GroupClassRepository extends CrudRepository<GroupClass, Long> {
     Collection<GroupClass> findAllByRoom(Room room);
+
+    Collection<GroupClass> findAllBySportType(SportType sportType);
 
     Collection<GroupClass> findAllByTrainersContaining(User user);
 

@@ -1,5 +1,6 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
+import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.RoomRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class RoomService implements ServiceInterface<Room> {
     private RoomRepository repository;
+    private GroupClassRepository groupClassRepository;
 
     public Room create(Room room) throws EntityStateException {
         if (exists(room))
@@ -46,7 +48,19 @@ public class RoomService implements ServiceInterface<Room> {
     }
 
     public void deleteById(Long id) {
+        deleteRoomFromGroupClasses(id);
         repository.deleteById(id);
+    }
+
+    public void deleteRoomFromGroupClasses(Long id) {
+        var roomOp = repository.findById(id);
+        if (roomOp.isEmpty()) {
+            return;
+        }
+        var groupClasses = groupClassRepository.findAllByRoom(roomOp.get());
+        for (var groupClass : groupClasses) {
+            groupClass.setRoom(null);
+        }
     }
 
     public Boolean exists(Room room) {
