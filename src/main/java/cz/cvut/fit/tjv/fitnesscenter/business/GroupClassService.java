@@ -64,7 +64,10 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         );
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
-                trainer -> checkTrainersAvailability(trainer, groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getId())
+                trainer -> {
+                    User realUser = userRepository.findById(trainer.getId()).get();
+                    checkTrainersAvailability(realUser, groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getId());
+                }
         );
         return repository.save(groupClass);
     }
@@ -108,14 +111,14 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     }
 
     public void checkEnoughCapacity(Integer groupClassCapacity, Long roomId, LocalDateTime timeFrom, LocalDateTime timeTo) {
-        Room room = roomService.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("Room"));
-        if (groupClassCapacity > countRemainingCapacity(room, timeFrom, timeTo)) {
+        if (groupClassCapacity > countRemainingCapacity(roomId, timeFrom, timeTo)) {
             throw new NotEnoughCapacityException();
         }
     }
 
-    public Integer countRemainingCapacity(Room room, LocalDateTime timeFrom, LocalDateTime timeTo) {
+    public Integer countRemainingCapacity(Long roomId, LocalDateTime timeFrom, LocalDateTime timeTo) {
+        Room room = roomService.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("Room"));
         Collection<GroupClass> overlappingGroupClasses =
                 repository.findAllByRoomAndTime(
                         room,
@@ -129,6 +132,11 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return (biggestOverlappingGroupClassOp.isEmpty() ?
                 room.getCapacity() :
                 room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
+    }
+
+    public void checkTrainersAvailabilityByUsername(String username, LocalDateTime timeFrom, LocalDateTime timeTo) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User"));
+        checkTrainersAvailability(user, timeFrom, timeTo, null);
     }
 
     public void checkTrainersAvailability(User user, LocalDateTime timeFrom, LocalDateTime timeTo, Long groupClassId) {
