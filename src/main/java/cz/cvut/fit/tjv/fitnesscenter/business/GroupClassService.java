@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
+import cz.cvut.fit.tjv.fitnesscenter.dao.SportTypeRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
@@ -20,6 +21,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     private GroupClassRepository repository;
     private RoomService roomService;
     private UserRepository userRepository;
+    private SportTypeRepository sportTypeRepository;
 
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))
@@ -30,6 +32,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                 groupClass.getTimeFrom(),
                 groupClass.getTimeTo()
         );
+        sportTypeCheck(groupClass.getSportType().getId());
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
                 trainer -> {
@@ -56,12 +59,8 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         if (!exists(groupClass))
             throw new EntityNotFoundException("Class");
-        checkEnoughCapacity(
-                groupClass.getCapacity(),
-                groupClass.getRoom().getId(),
-                groupClass.getTimeFrom(),
-                groupClass.getTimeTo()
-        );
+        sportTypeCheck(groupClass.getSportType().getId());
+        countRemainingCapacityUpdate(groupClass);
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
                 trainer -> {
@@ -134,6 +133,25 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                 room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
     }
 
+    public Integer countRemainingCapacityUpdate(GroupClass groupClass) {
+        Room room = roomService.findById(groupClass.getRoom().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Room"));
+        Collection<GroupClass> overlappingGroupClasses =
+                repository.findAllByRoomAndTime(
+                        room,
+                        groupClass.getTimeFrom(),
+                        groupClass.getTimeTo()
+                );
+        overlappingGroupClasses.remove(groupClass);
+        var biggestOverlappingGroupClassOp =
+                overlappingGroupClasses.stream().max(
+                        Comparator.comparing(GroupClass::getCapacity)
+                );
+        return (biggestOverlappingGroupClassOp.isEmpty() ?
+                room.getCapacity() :
+                room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
+    }
+
     public void checkTrainersAvailabilityByUsername(String username, LocalDateTime timeFrom, LocalDateTime timeTo) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User"));
         checkTrainersAvailability(user, timeFrom, timeTo, null);
@@ -155,5 +173,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
             }
             throw new TrainerNotAvailableException(user.getUsername());
         }
+    }
+
+    void sportTypeCheck(Long sportTypeId) {
+        sportTypeRepository.findById(sportTypeId).orElseThrow(() -> new EntityNotFoundException("SportType"));
     }
 }
