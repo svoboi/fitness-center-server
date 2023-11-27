@@ -6,6 +6,7 @@ import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
+import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,15 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
     public GroupClass create(GroupClass groupClass) throws EntityStateException {
         if (exists(groupClass))
             throw new ConflictingEntityExistsException();
-        checkEnoughCapacity(
-                groupClass.getCapacity(),
-                groupClass.getRoom().getId(),
-                groupClass.getTimeFrom(),
-                groupClass.getTimeTo()
-        );
-        sportTypeCheck(groupClass.getSportType().getId());
+        if (groupClass.getRoom() != null) {
+            checkEnoughCapacity(
+                    groupClass.getCapacity(),
+                    groupClass.getRoom().getId(),
+                    groupClass.getTimeFrom(),
+                    groupClass.getTimeTo()
+            );
+        }
+        sportTypeCheck(groupClass.getSportType());
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
                 trainer -> {
@@ -59,8 +62,10 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
         if (!exists(groupClass))
             throw new EntityNotFoundException("Class");
-        sportTypeCheck(groupClass.getSportType().getId());
-        countRemainingCapacityUpdate(groupClass);
+        sportTypeCheck(groupClass.getSportType());
+        if (groupClass.getRoom() != null) {
+            checkEnoughCapacityUpdate(groupClass);
+        }
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
                 trainer -> {
@@ -133,6 +138,12 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                 room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
     }
 
+    public void checkEnoughCapacityUpdate(GroupClass groupClass) {
+        if (groupClass.getCapacity() > countRemainingCapacityUpdate(groupClass)) {
+            throw new NotEnoughCapacityException();
+        }
+    }
+
     public Integer countRemainingCapacityUpdate(GroupClass groupClass) {
         Room room = roomService.findById(groupClass.getRoom().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Room"));
@@ -175,7 +186,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         }
     }
 
-    void sportTypeCheck(Long sportTypeId) {
-        sportTypeRepository.findById(sportTypeId).orElseThrow(() -> new EntityNotFoundException("SportType"));
+    void sportTypeCheck(SportType sportType) {
+        if (sportType != null) {
+            sportTypeRepository.findById(sportType.getId()).orElseThrow(() -> new EntityNotFoundException("SportType"));
+        }
     }
 }

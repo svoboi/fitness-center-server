@@ -16,11 +16,6 @@ public class GroupClassMapper extends Mapper<GroupClass> {
             for (var el : groupClass.getTrainers()) {
                 trainers.add(Map.of("id", el.getId()));
             }
-//            trainers.put("id", groupClass
-//                    .getTrainers()
-//                    .stream()
-//                    .map(User::getId)
-//                    .collect(Collectors.toList()));
         }
         return new GroupClassDto(groupClass.getId(),
                 groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getCapacity(),
