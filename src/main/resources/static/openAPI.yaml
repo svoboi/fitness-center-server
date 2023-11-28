@@ -128,6 +128,31 @@ paths:
         - GroupClass
 
   /groupClasses/{classId}/trainers:
+    get:
+      description: Get trainers for group class
+      operationId: "get_trainers"
+      parameters:
+        - in: path
+          name: classId
+          required: true
+          description: ID of the class to get trainers for
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example: [ "jara", "jara1" ]
+        '404':
+          description: Not Found
+      tags:
+        - GroupClass
     put:
       description: Add new trainer to group class
       operationId: "add_trainer"

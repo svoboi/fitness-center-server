@@ -80,6 +80,14 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         repository.deleteById(id);
     }
 
+    public Vector<String> trainersUsernamesInGroupClass(Long classId) {
+        var groupClass = repository.findById(classId).orElseThrow(() -> new EntityNotFoundException("Class"));
+        Vector<String> usernames = new Vector<String>();
+        for (var trainer : groupClass.getTrainers()) {
+            usernames.add(userRepository.findById(trainer.getId()).get().getUsername());
+        }
+        return usernames;
+    }
 
     public GroupClass addTrainer(Long classId, String trainerUsername) {
         var groupClass = repository.findById(classId).orElseThrow(() -> new EntityNotFoundException("Class"));

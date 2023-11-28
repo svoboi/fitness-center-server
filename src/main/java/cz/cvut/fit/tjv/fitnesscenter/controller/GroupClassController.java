@@ -21,6 +21,13 @@ public class GroupClassController extends AbstractController<GroupClass> {
         super(groupClassService, groupClassMapper);
     }
 
+    @GetMapping("/{classId}/trainers")
+    public ResponseEntity<Object> trainersUsernamesInGroupClass(@PathVariable Long classId) {
+        return new ResponseEntity<>(
+                ((GroupClassService) service).trainersUsernamesInGroupClass(classId),
+                HttpStatus.OK);
+    }
+
     @PutMapping("/{classId}/trainers")
     public ResponseEntity<Object> addTrainer(@PathVariable Long classId, @RequestBody @Validated UsernameObject trainerUsernameObject) {
         return new ResponseEntity<>(
