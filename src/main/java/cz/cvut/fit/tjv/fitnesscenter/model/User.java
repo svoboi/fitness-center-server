@@ -36,8 +36,7 @@ public class User {
     @Email
     @NotBlank(message = "emailAddress is required.")
     private String emailAddress;
-
-    @NotBlank(message = "phoneNumber is required.")
+    
     private String phoneNumber;
 
     @NotNull(message = "employee is required.")
