@@ -9,10 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 
 @RestController
 @RequestMapping("/groupClasses")
@@ -41,24 +37,5 @@ public class GroupClassController extends AbstractController<GroupClass> {
     public ResponseEntity<Object> removeTrainer(@PathVariable Long classId, @RequestBody @Validated UsernameObject trainerUsernameObject) {
         ((GroupClassService) service).removeTrainer(classId, trainerUsernameObject.getUsername());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/remainingRoomCapacity/{roomId}/between")
-    public ResponseEntity<Object> remainingCapacity(@PathVariable Long roomId,
-                                                    @RequestParam LocalDateTime timeFrom,
-                                                    @RequestParam LocalDateTime timeTo) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("remainingCapacity", ((GroupClassService) service).countRemainingCapacity(roomId, timeFrom, timeTo));
-        return new ResponseEntity<>(
-                body,
-                HttpStatus.OK);
-    }
-
-    @GetMapping("/trainerAvailability/{username}/between")
-    public ResponseEntity<Object> trainerAvailability(@PathVariable String username,
-                                                      @RequestParam LocalDateTime timeFrom,
-                                                      @RequestParam LocalDateTime timeTo) {
-        ((GroupClassService) service).checkTrainersAvailabilityByUsername(username, timeFrom, timeTo);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -171,11 +171,6 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                 room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
     }
 
-    public void checkTrainersAvailabilityByUsername(String username, LocalDateTime timeFrom, LocalDateTime timeTo) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User"));
-        checkTrainersAvailability(user, timeFrom, timeTo, null);
-    }
-
     public void checkTrainersAvailability(User user, LocalDateTime timeFrom, LocalDateTime timeTo, Long groupClassId) {
         Collection<GroupClass> overlappingGroupClasses =
                 repository.findAllByTrainerAndTime(
