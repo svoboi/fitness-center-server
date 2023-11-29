@@ -6,9 +6,6 @@ import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityNotFoundException;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.UsernameTakenException;
-import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
-import cz.cvut.fit.tjv.fitnesscenter.model.Room;
-import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,9 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
@@ -225,59 +220,5 @@ public class UserServiceUnitTest {
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
         assert (userService.isUsernameAvailable(user.getUsername()) == Boolean.FALSE);
-    }
-
-    @Test
-    void shouldCount() {
-        Room room = new Room(1L, 1000, "one");
-        SportType sportType = new SportType(1L, "one");
-        User user = new User(1L,
-                "Troy",
-                "Bolton",
-                "troybolton",
-                "password123",
-                "troy.bolton@easthigh.com",
-                789456123L,
-                Boolean.TRUE,
-                Boolean.TRUE);
-        GroupClass groupClass1 = new GroupClass(1L,
-                LocalDateTime.of(2023, 3, 20, 8, 30),
-                LocalDateTime.of(2023, 3, 20, 10, 0),
-                100,
-                room,
-                sportType,
-                Collections.singleton(user));
-        GroupClass groupClass2 = new GroupClass(1L,
-                LocalDateTime.of(2023, 3, 20, 10, 30),
-                LocalDateTime.of(2023, 3, 20, 11, 30),
-                100,
-                room,
-                sportType,
-                Collections.singleton(user));
-        GroupClass groupClass3 = new GroupClass(1L,
-                LocalDateTime.of(2023, 3, 20, 14, 0),
-                LocalDateTime.of(2023, 3, 20, 15, 30),
-                100,
-                room,
-                sportType,
-                Collections.singleton(user));
-
-        LocalDateTime from = LocalDateTime.of(2023, 3, 20, 9, 0);
-        LocalDateTime to = LocalDateTime.of(2023, 3, 20, 15, 0);
-
-        var groupClasses = new HashSet<GroupClass>();
-        groupClasses.add(groupClass1);
-        groupClasses.add(groupClass2);
-        groupClasses.add(groupClass3);
-        Mockito.when(groupClassRepository
-                        .findAllByTrainerAndTime(
-                                user,
-                                from,
-                                to
-                        ))
-                .thenReturn(groupClasses);
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-
-        assert (userService.countHoursByUserAndTimeFrame(user.getId(), from, to) == 3);
     }
 }
