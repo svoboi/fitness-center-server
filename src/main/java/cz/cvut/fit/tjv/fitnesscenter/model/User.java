@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -36,8 +37,9 @@ public class User {
     @Email
     @NotBlank(message = "emailAddress is required.")
     private String emailAddress;
-    
-    private String phoneNumber;
+
+    @Min(100000000)
+    private Long phoneNumber;
 
     @NotNull(message = "employee is required.")
     private Boolean employee;

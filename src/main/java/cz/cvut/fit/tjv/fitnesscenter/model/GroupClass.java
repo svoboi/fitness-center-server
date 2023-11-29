@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class GroupClass {
     @NotNull(message = "timeTo is required")
     private LocalDateTime timeTo;
     @NotNull(message = "capacity is required.")
+    @Min(0)
     private Integer capacity;
 
     @ManyToOne
