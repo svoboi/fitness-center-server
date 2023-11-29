@@ -44,7 +44,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
 
@@ -61,7 +61,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.existsById(1L)).thenReturn(Boolean.TRUE);
@@ -80,7 +80,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.existsById(1L)).thenReturn(Boolean.FALSE);
@@ -100,7 +100,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.findAll()).thenReturn(Collections.singleton(user));
@@ -118,7 +118,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -144,7 +144,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.existsById(1L)).thenReturn(Boolean.TRUE);
@@ -162,7 +162,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
 
@@ -180,7 +180,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.existsById(1L)).thenReturn(Boolean.FALSE);
@@ -200,7 +200,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -219,7 +219,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Mockito.when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -237,7 +237,7 @@ public class UserServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         GroupClass groupClass1 = new GroupClass(1L,

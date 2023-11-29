@@ -43,7 +43,7 @@ public class UserServiceIntegrationTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         userService.create(user);
@@ -92,7 +92,7 @@ public class UserServiceIntegrationTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         Assertions.assertThrows(

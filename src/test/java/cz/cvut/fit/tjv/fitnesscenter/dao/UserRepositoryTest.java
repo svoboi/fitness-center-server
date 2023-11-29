@@ -20,7 +20,7 @@ public class UserRepositoryTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.FALSE,
                 Boolean.TRUE);
         userRepository.save(user1);

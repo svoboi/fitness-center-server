@@ -1,6 +1,7 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
+import cz.cvut.fit.tjv.fitnesscenter.dao.SportTypeRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
 import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
@@ -31,6 +32,9 @@ public class GroupClassServiceUnitTest {
     RoomService roomService;
 
     @MockBean
+    SportTypeRepository sportTypeRepository;
+
+    @MockBean
     UserRepository userRepository;
 
     @Test
@@ -48,6 +52,8 @@ public class GroupClassServiceUnitTest {
 
         Mockito.when(roomService.findById(room.getId())).thenReturn(Optional.of(room));
         Mockito.when(groupClassRepository.save(groupClass)).thenReturn(groupClass);
+        Mockito.when(sportTypeRepository.findById(1L)).thenReturn(Optional.of(sportType));
+
         groupClassService.create(groupClass);
         Mockito.verify(groupClassRepository, Mockito.times(1)).save(groupClass);
     }
@@ -62,7 +68,7 @@ public class GroupClassServiceUnitTest {
                 "troybolton",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.TRUE,
                 Boolean.TRUE);
         GroupClass conflictingGroupClass = new GroupClass(1L,
@@ -82,6 +88,7 @@ public class GroupClassServiceUnitTest {
         Mockito.when(roomService.findById(room.getId())).thenReturn(Optional.of(room));
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         Mockito.when(groupClassRepository.existsById(1L)).thenReturn(Boolean.FALSE);
+        Mockito.when(sportTypeRepository.findById(1L)).thenReturn(Optional.of(sportType));
         Mockito.when(groupClassRepository
                         .findAllByTrainerAndTime(user,
                                 LocalDateTime.of(2023, 3, 20, 9, 30),
@@ -172,6 +179,7 @@ public class GroupClassServiceUnitTest {
         Mockito.when(groupClassRepository.existsById(1L)).thenReturn(Boolean.TRUE);
         Mockito.when(groupClassRepository.save(groupClass)).thenReturn(groupClass);
         Mockito.when(roomService.findById(room.getId())).thenReturn(Optional.of(room));
+        Mockito.when(sportTypeRepository.findById(1L)).thenReturn(Optional.of(sportType));
 
         assert (groupClassService.update(groupClass, groupClass.getId()).getTimeFrom().equals(LocalDateTime.of(2023, 3, 20, 9, 30)));
         Mockito.verify(groupClassRepository, Mockito.times(1)).save(groupClass);
@@ -231,7 +239,7 @@ public class GroupClassServiceUnitTest {
                 "jareknohavica",
                 "password123",
                 "troy.bolton@easthigh.com",
-                "10",
+                789456123L,
                 Boolean.FALSE,
                 Boolean.FALSE);
         GroupClass groupClass = new GroupClass(1L,
