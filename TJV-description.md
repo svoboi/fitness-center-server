@@ -1,12 +1,4 @@
-# Scheduling application for fitness center
-
-This application enables scheduling of group classes lead by a trainer in a fitness center. It keeps track of class
-capacity and when the class starts and ends. If trainer tries to add class with higher capacity than room capacity, the
-system refuses to add this class.
-
-It stores first name, last name, email and phone number of all users as well as their username and password.
-
-## Other info for subject BI-TJV
+# Info for subject BI-TJV
 
 As implemented complex request the application checks whether trainer is available or busy when adding trainer to class,
 creating class
