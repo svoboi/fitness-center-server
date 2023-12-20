@@ -3,6 +3,8 @@ package cz.cvut.fit.tjv.fitnesscenter.business;
 
 import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.UserRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.*;
+import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
 import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,22 +18,16 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService implements ServiceInterface<User> {
 
-    UserRepository repository;
-    GroupClassRepository groupClassRepository;
+    private UserRepository repository;
+    private GroupClassRepository groupClassRepository;
 
     public User create(User user) throws EntityStateException {
-        Long id = user.getId();
-        if (id != null && exists(user))
-            throw new EntityStateException("person with id " + user.getId() + " already exists");
-        if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
-            throw new EntityStateException("non-employee cant teach classes");
+        if (user.getId() != null && exists(user))
+            throw new ConflictingEntityExistsException();
+        if (repository.findByUsername(user.getUsername()).isPresent()) {
+            throw new UsernameTakenException();
         }
-        if (!leadClassesSetValid(user)) {
-            throw new EntityStateException("at least one of the classes IDs is invalid");
-        }
-        User correctIdUser = repository.save(user);
-        addUserToLeadClasses(correctIdUser);
-        return repository.save(correctIdUser);
+        return repository.save(user);
     }
 
     public Optional<User> findById(Long id) {
@@ -46,55 +42,32 @@ public class UserService implements ServiceInterface<User> {
 
     public User update(User user, Long pathId) throws EntityStateException {
         if (!user.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+            throw new EntityIdentificationException();
         }
         if (!exists(user)) {
-            throw new EntityStateException("class id missing or class with this id doesnt exist");
+            throw new EntityNotFoundException("User");
         }
-        if (user.getEmployee().equals(Boolean.FALSE) && !user.getLeadClasses().isEmpty()) {
-            throw new EntityStateException("non-employee cant teach classes");
+        if (repository.findByUsername(user.getUsername()).isPresent()
+                && !repository.findByUsername(user.getUsername()).get().getId().equals(pathId)) {
+            throw new UsernameTakenException();
         }
-        if (!leadClassesSetValid(user)) {
-            throw new EntityStateException("at least one of the classes IDs is invalid");
-        }
-        removeOriginalLeadClasses(repository.findById(pathId).get());
-        User correctIdUser = repository.save(user);
-        addUserToLeadClasses(correctIdUser);
-        return repository.save(correctIdUser);
+        return repository.save(user);
     }
 
     public void deleteById(Long id) {
+        User user = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("User"));
+        for (GroupClass groupClass : groupClassRepository.findAllByTrainersContaining(user)) {
+            groupClass.removeTrainer(user);
+        }
         repository.deleteById(id);
+    }
+
+    public Boolean isUsernameAvailable(String username) {
+        return repository.findByUsername(username).isEmpty();
     }
 
     public Boolean exists(User user) {
         Long id = user.getId();
         return id != null && repository.existsById(id);
-    }
-
-    public Boolean leadClassesSetValid(User user) {
-        for (var groupClass : user.getLeadClasses()) {
-            Long groupClassId = groupClass.getId();
-            if (groupClassRepository.findById(groupClassId).isEmpty()) {
-                return Boolean.FALSE;
-            }
-        }
-        return Boolean.TRUE;
-    }
-
-    public void addUserToLeadClasses(User user) {
-        for (var groupClass : user.getLeadClasses()) {
-            var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
-            groupClassFromRep.addTrainer(user);
-            groupClassRepository.save(groupClassFromRep);
-        }
-    }
-
-    public void removeOriginalLeadClasses(User user) {
-        for (var groupClass : user.getLeadClasses()) {
-            var groupClassFromRep = groupClassRepository.findById(groupClass.getId()).get();
-            groupClassFromRep.removeTrainer(user);
-            groupClassRepository.save(groupClassFromRep);
-        }
     }
 }

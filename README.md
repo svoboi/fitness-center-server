@@ -1,16 +1,34 @@
 # Scheduling application for fitness center
 
-This application enables scheduling of group classes lead by a trainer in a fitness center. It keeps track of class capacity and when the class starts and ends. If trainer tries to add class with higher capacity than room capacity, the system refuses to add this class.
-
-Each user can find all the planned classes based on a week, current week is displayed by default. 
+This application enables scheduling of group classes led by trainers in a fitness center. It keeps track of class
+capacity and when the class starts and ends. Before adding new class, the app checks if all the trainers are available
+at given time
+and if the room capacity is not exceeded at any point, because of other classes in the same room at the same time.
 
 It stores first name, last name, email and phone number of all users as well as their username and password.
+Classes are also categorized by sport.
 
+## How to start up the app
 
-## Other info for subject BI-TJV
+### Requirements
 
-As implemented complex request there will be an option to count number of employees worked hours in last month.
+Tools: gradle, npm
 
-Business operation: Adding group class. First the client sends request to ask, whether there is enough capacity in given room at given time. Then it either creates the class or it shows an error message along the lines of "Not enough capacity in this room at requested time".
+This app is divided into frontend and backend, so you need to clone two repositories:
 
-<img src="entity_diagram.png">
+1. https://gitlab.fit.cvut.cz/svoboi11/tjv-fitness-center.git
+2. https://gitlab.fit.cvut.cz/svoboi11/tjv-fitness-center-fe.git
+
+### Backend start-up
+
+After cloning repository, you simply run "./gradlew bootRun".
+Your system might say, It's only 80 % done, but it is working.
+
+If you prefer, starting the backend from Idea or other editor is okay too.
+
+Now swagger is available on: http://localhost:8080/swagger-ui/index.html#/
+
+### Frontend start-up
+
+After cloning repository, run "npm install" and then "npm run dev".
+Then use the link npm gives you.

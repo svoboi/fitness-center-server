@@ -1,6 +1,11 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
+import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.RoomRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityNotFoundException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.model.Room;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,13 +18,13 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class RoomService implements ServiceInterface<Room> {
-    RoomRepository repository;
+    private RoomRepository repository;
+    private GroupClassRepository groupClassRepository;
 
-    public Room create(Room entity) throws EntityStateException {
-        Long id = entity.getId();
-        if (id != null && repository.existsById(id))
-            throw new EntityStateException("room with id " + entity.getId() + " already exists");
-        return repository.save(entity);
+    public Room create(Room room) throws EntityStateException {
+        if (exists(room))
+            throw new ConflictingEntityExistsException();
+        return repository.save(room);
     }
 
     public Optional<Room> findById(Long id) {
@@ -33,21 +38,33 @@ public class RoomService implements ServiceInterface<Room> {
     }
 
     public Room update(Room room, Long pathId) throws EntityStateException {
-        if (!room.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+        if (room.getId() == null || !room.getId().equals(pathId)) {
+            throw new EntityIdentificationException();
         }
-        Long id = room.getId();
-        if (id == null)
-            throw new EntityStateException("room id missing");
-        //todo: check room capacity
-        if (repository.existsById(id))
-            return repository.save(room);
-        else
-            throw new EntityStateException("room with id " + id + " does not exist exists");
+        if (!repository.existsById(room.getId())) {
+            throw new EntityNotFoundException("Room");
+        }
+        return repository.save(room);
     }
 
     public void deleteById(Long id) {
+        deleteRoomFromGroupClasses(id);
         repository.deleteById(id);
     }
 
+    public void deleteRoomFromGroupClasses(Long id) {
+        var roomOp = repository.findById(id);
+        if (roomOp.isEmpty()) {
+            return;
+        }
+        var groupClasses = groupClassRepository.findAllByRoom(roomOp.get());
+        for (var groupClass : groupClasses) {
+            groupClass.setRoom(null);
+        }
+    }
+
+    public Boolean exists(Room room) {
+        Long id = room.getId();
+        return id != null && repository.existsById(id);
+    }
 }

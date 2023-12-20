@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Map;
+import java.util.Vector;
 
 @Setter
 @Getter
@@ -21,9 +22,9 @@ public class GroupClassDto {
     private LocalDateTime timeTo;
     private int capacity;
 
-    Room room;
+    private Room room;
 
-    SportType sportType;
+    private SportType sportType;
 
-    Set<Long> trainers;
+    private Vector<Map<String, Long>> trainers;
 }

@@ -2,24 +2,20 @@ package cz.cvut.fit.tjv.fitnesscenter.controller.dto;
 
 
 import cz.cvut.fit.tjv.fitnesscenter.model.GroupClass;
-import cz.cvut.fit.tjv.fitnesscenter.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Vector;
 
 @Component
 public class GroupClassMapper extends Mapper<GroupClass> {
     @Override
     public Object toDto(GroupClass groupClass) {
-        Set<Long> trainers = new HashSet<>();
+        Vector<Map<String, Long>> trainers = new Vector<>();
         if (groupClass.getTrainers() != null) {
-            trainers = groupClass
-                    .getTrainers()
-                    .stream()
-                    .map(User::getId)
-                    .collect(Collectors.toSet());
+            for (var el : groupClass.getTrainers()) {
+                trainers.add(Map.of("id", el.getId()));
+            }
         }
         return new GroupClassDto(groupClass.getId(),
                 groupClass.getTimeFrom(), groupClass.getTimeTo(), groupClass.getCapacity(),

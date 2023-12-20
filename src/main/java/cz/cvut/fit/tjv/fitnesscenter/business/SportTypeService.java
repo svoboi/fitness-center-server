@@ -1,6 +1,11 @@
 package cz.cvut.fit.tjv.fitnesscenter.business;
 
+import cz.cvut.fit.tjv.fitnesscenter.dao.GroupClassRepository;
 import cz.cvut.fit.tjv.fitnesscenter.dao.SportTypeRepository;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.ConflictingEntityExistsException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityIdentificationException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityNotFoundException;
+import cz.cvut.fit.tjv.fitnesscenter.exceptions.EntityStateException;
 import cz.cvut.fit.tjv.fitnesscenter.model.SportType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,12 +18,12 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SportTypeService implements ServiceInterface<SportType> {
-    SportTypeRepository repository;
+    private SportTypeRepository repository;
+    private GroupClassRepository groupClassRepository;
 
     public SportType create(SportType sportType) throws EntityStateException {
-        Long id = sportType.getId();
-        if (id != null && repository.existsById(id))
-            throw new EntityStateException("room with id " + sportType.getId() + " already exists");
+        if (exists(sportType))
+            throw new ConflictingEntityExistsException();
         return repository.save(sportType);
     }
 
@@ -33,20 +38,33 @@ public class SportTypeService implements ServiceInterface<SportType> {
     }
 
     public SportType update(SportType sportType, Long pathId) throws EntityStateException {
-        if (!sportType.getId().equals(pathId)) {
-            throw new EntityStateException("conficting id in path and in body");
+        if (sportType.getId() == null || !sportType.getId().equals(pathId)) {
+            throw new EntityIdentificationException();
         }
-        Long id = sportType.getId();
-        if (id == null)
-            throw new EntityStateException("sportType id missing");
-        //todo: check room capacity
-        if (repository.existsById(id))
-            return repository.save(sportType);
-        else
-            throw new EntityStateException("sportType with id " + id + " does not exist exists");
+        if (!repository.existsById(sportType.getId())) {
+            throw new EntityNotFoundException("Room");
+        }
+        return repository.save(sportType);
     }
 
     public void deleteById(Long id) {
+        deleteSportTypeFromGroupClasses(id);
         repository.deleteById(id);
+    }
+
+    public void deleteSportTypeFromGroupClasses(Long id) {
+        var sportTypeOp = repository.findById(id);
+        if (sportTypeOp.isEmpty()) {
+            return;
+        }
+        var groupClasses = groupClassRepository.findAllBySportType(sportTypeOp.get());
+        for (var groupClass : groupClasses) {
+            groupClass.setSportType(null);
+        }
+    }
+
+    public Boolean exists(SportType sportType) {
+        Long id = sportType.getId();
+        return id != null && repository.existsById(id);
     }
 }

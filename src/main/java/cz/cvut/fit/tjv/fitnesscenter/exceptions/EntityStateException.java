@@ -1,4 +1,4 @@
-package cz.cvut.fit.tjv.fitnesscenter.business;
+package cz.cvut.fit.tjv.fitnesscenter.exceptions;
 
 import lombok.NoArgsConstructor;
 

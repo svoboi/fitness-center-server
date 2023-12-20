@@ -1,16 +1,16 @@
 package cz.cvut.fit.tjv.fitnesscenter.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity(name = "person")
 @Getter
@@ -22,42 +22,28 @@ public class User {
     @GeneratedValue
     public Long id;
 
-    @NotBlank
+    @NotBlank(message = "firstName is required.")
     private String firstName;
-    @NotBlank
+
+    @NotBlank(message = "lastName is required.")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "username is required.")
     private String username;
-    @NotBlank
+
+    @NotBlank(message = "password is required.")
     private String password;
 
     @Email
-    @NotBlank
+    @NotBlank(message = "emailAddress is required.")
     private String emailAddress;
-    @NotBlank
-    private String phoneNumber;
 
-    @NotNull
+    @Min(100000000)
+    private Long phoneNumber;
+
+    @NotNull(message = "employee is required.")
     private Boolean employee;
-    @NotNull
+
+    @NotNull(message = "customer is required.")
     private Boolean customer;
-
-    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
-    private Set<GroupClass> leadClasses = new HashSet<>();
-
-    public void addLeadClass(GroupClass groupClass) {
-        leadClasses.add(groupClass);
-    }
-
-    public void removeLeadClass(GroupClass groupClass) {
-        leadClasses.remove(groupClass);
-    }
-
-    @PreRemove
-    public void removeTrainersFromGroupClasses() {
-        for (GroupClass leadClass : leadClasses) {
-            leadClass.removeTrainer(this);
-        }
-    }
 }

@@ -17,6 +17,6 @@ public class SportType {
     @GeneratedValue
     public Long id;
 
-    @NotBlank
+    @NotBlank(message = "typeName is required.")
     private String typeName;
 }
