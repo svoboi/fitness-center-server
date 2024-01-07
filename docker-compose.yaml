@@ -1,0 +1,27 @@
+version: '3'
+services:
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - fitness-center
+
+  postgres:
+    image: 'postgres:latest'
+    networks:
+      - fitness-center
+    environment:
+      - 'POSTGRES_DB=fitness_center'
+      - 'POSTGRES_PASSWORD=fitness'
+      - 'POSTGRES_USER=fitness'
+    ports:
+      - '5432:5432'
+
+networks:
+  fitness-center:
+    driver: bridge
