@@ -28,12 +28,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         if (exists(groupClass))
             throw new ConflictingEntityExistsException();
         if (groupClass.getRoom() != null) {
-            checkEnoughCapacity(
-                    groupClass.getCapacity(),
-                    groupClass.getRoom().getId(),
-                    groupClass.getTimeFrom(),
-                    groupClass.getTimeTo()
-            );
+            checkEnoughCapacity(groupClass, false);
         }
         sportTypeCheck(groupClass.getSportType());
         checkTrainersSetOnlyEmployees(groupClass);
@@ -64,7 +59,7 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
             throw new EntityNotFoundException("Class");
         sportTypeCheck(groupClass.getSportType());
         if (groupClass.getRoom() != null) {
-            checkEnoughCapacityUpdate(groupClass);
+            checkEnoughCapacity(groupClass, true);
         }
         checkTrainersSetOnlyEmployees(groupClass);
         groupClass.getTrainers().forEach(
@@ -122,37 +117,31 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
         return id != null && repository.existsById(id);
     }
 
-    public void checkEnoughCapacity(Integer groupClassCapacity, Long roomId, LocalDateTime timeFrom, LocalDateTime timeTo) {
-        if (groupClassCapacity > countRemainingCapacity(roomId, timeFrom, timeTo)) {
+
+    public void checkEnoughCapacity(GroupClass groupClass, Boolean update) {
+        if (groupClass.getCapacity() > countRemainingCapacity(groupClass, update)) {
             throw new NotEnoughCapacityException();
         }
     }
 
-    public Integer countRemainingCapacity(Long roomId, LocalDateTime timeFrom, LocalDateTime timeTo) {
-        Room room = roomService.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("Room"));
-        Collection<GroupClass> overlappingGroupClasses =
-                repository.findAllByRoomAndTime(
-                        room,
-                        timeFrom,
-                        timeTo
-                );
-        var biggestOverlappingGroupClassOp =
-                overlappingGroupClasses.stream().max(
-                        Comparator.comparing(GroupClass::getCapacity)
-                );
-        return (biggestOverlappingGroupClassOp.isEmpty() ?
-                room.getCapacity() :
-                room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
-    }
-
-    public void checkEnoughCapacityUpdate(GroupClass groupClass) {
-        if (groupClass.getCapacity() > countRemainingCapacityUpdate(groupClass)) {
-            throw new NotEnoughCapacityException();
+    public Integer overlappingMaximum(Vector<GroupClassOverlapHelper> data) {
+        Collections.sort(data);
+        int maximum = 0;
+        int curr = 0;
+        for (var element : data) {
+            if (element.end) {
+                curr -= element.capacity;
+            } else {
+                curr += element.capacity;
+            }
+            if (maximum < curr) {
+                maximum = curr;
+            }
         }
+        return maximum;
     }
 
-    public Integer countRemainingCapacityUpdate(GroupClass groupClass) {
+    public Integer countRemainingCapacity(GroupClass groupClass, Boolean update) {
         Room room = roomService.findById(groupClass.getRoom().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Room"));
         Collection<GroupClass> overlappingGroupClasses =
@@ -161,14 +150,15 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
                         groupClass.getTimeFrom(),
                         groupClass.getTimeTo()
                 );
-        overlappingGroupClasses.remove(groupClass);
-        var biggestOverlappingGroupClassOp =
-                overlappingGroupClasses.stream().max(
-                        Comparator.comparing(GroupClass::getCapacity)
-                );
-        return (biggestOverlappingGroupClassOp.isEmpty() ?
-                room.getCapacity() :
-                room.getCapacity() - biggestOverlappingGroupClassOp.get().getCapacity());
+        if (update) {
+            overlappingGroupClasses.remove(groupClass);
+        }
+        Vector<GroupClassOverlapHelper> data = new Vector<>();
+        for (var overlappingClass : overlappingGroupClasses) {
+            data.add(new GroupClassOverlapHelper(overlappingClass.getTimeFrom(), false, overlappingClass.getCapacity()));
+            data.add(new GroupClassOverlapHelper(overlappingClass.getTimeTo(), true, overlappingClass.getCapacity()));
+        }
+        return room.getCapacity() - overlappingMaximum(data);
     }
 
     public void checkTrainersAvailability(User user, LocalDateTime timeFrom, LocalDateTime timeTo, Long groupClassId) {
