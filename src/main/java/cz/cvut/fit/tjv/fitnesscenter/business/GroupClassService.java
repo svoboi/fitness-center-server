@@ -119,8 +119,9 @@ public class GroupClassService implements ServiceInterface<GroupClass> {
 
 
     public void checkEnoughCapacity(GroupClass groupClass, Boolean update) {
-        if (groupClass.getCapacity() > countRemainingCapacity(groupClass, update)) {
-            throw new NotEnoughCapacityException();
+        Integer remainingCapacity = countRemainingCapacity(groupClass, update);
+        if (groupClass.getCapacity() > remainingCapacity) {
+            throw new NotEnoughCapacityException(remainingCapacity.toString());
         }
     }
 
