@@ -19,7 +19,10 @@ This app is divided into frontend and backend, so you need to clone two reposito
 
 ### Backend start-up
 
-After cloning repository, you simply run "./gradlew bootRun".
+After cloning repository, you simply run 
+```
+./gradlew bootRun
+```
 Your system might say, It's only 80 % done, but it is working.
 
 If you prefer starting the backend from Idea or another editor, that's okay too.
@@ -28,5 +31,16 @@ Now swagger is available on: http://localhost:8080/swagger-ui/index.html#/
 
 ### Frontend start-up
 
-After cloning repository, run "npm install" and then "npm run dev".
+After cloning repository, run 
+
+```
+npm install
+```
+
+and then 
+
+```
+npm run dev
+```
+
 Then use the link npm gives you.
